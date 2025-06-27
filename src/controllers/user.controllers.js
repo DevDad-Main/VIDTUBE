@@ -26,7 +26,7 @@ const generateAccessAndRefreshToken = async (userId) => {
   } catch (error) {
     throw new ApiError(
       500,
-      "Something went wrong while generating access and refresh tokens"
+      "Something went wrong while generating access and refresh tokens",
     );
   }
 };
@@ -108,7 +108,7 @@ const registerUser = asyncHandler(async (req, res) => {
     //NOTE: Extra query from the DB to make sure we are not maing a duplicate
     //NOTE: Also .select()we are specifing the data we dont want to be returned
     const createdUser = await User.findById(user._id).select(
-      "-password -refreshToken"
+      "-password -refreshToken",
     );
 
     if (!createdUser) {
@@ -132,7 +132,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
     throw new ApiError(
       500,
-      "Something went wrong while registering a new user and image files were deleted"
+      "Something went wrong while registering a new user and image files were deleted",
     );
   }
 });
@@ -170,11 +170,11 @@ const loginUser = asyncHandler(async (req, res) => {
   }
 
   const { accessToken, refreshToken } = await generateAccessAndRefreshToken(
-    user._id
+    user._id,
   );
 
   const loggedInUser = await User.findById(user._id).select(
-    "-password -refreshToken"
+    "-password -refreshToken",
   );
 
   const options = {
@@ -193,8 +193,8 @@ const loginUser = asyncHandler(async (req, res) => {
         new ApiResponse(
           200,
           { user: loggedInUser, accessToken, refreshToken },
-          "User logged in successfully"
-        )
+          "User logged in successfully",
+        ),
       )
   );
 });
@@ -209,7 +209,7 @@ const logoutUser = asyncHandler(async (req, res) => {
       },
     },
 
-    { new: true } //NOTE: Returns us the updated user
+    { new: true }, //NOTE: Returns us the updated user
   );
 
   const options = {
@@ -242,7 +242,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
   try {
     const decodedToken = jwt.verify(
       incomingRefreshToken,
-      process.env.REFRESH_TOKEN_SECRET
+      process.env.REFRESH_TOKEN_SECRET,
     );
 
     //NOTE: If this token can be decoded, then we have acces to the information of the _id.
@@ -274,8 +274,8 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
         new ApiResponse(
           200,
           { accessToken, refreshToken: newRefreshToken },
-          "Access token refreshed successfully"
-        )
+          "Access token refreshed successfully",
+        ),
       );
   } catch (error) {}
 });
@@ -327,7 +327,7 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
         email: email,
       },
     },
-    { new: true }
+    { new: true },
   ).select("-password -refreshToken");
 
   res
@@ -356,7 +356,7 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
         avatar: avatar.url,
       },
     },
-    { new: true }
+    { new: true },
   ).select("-password -refreshToken");
 
   res
@@ -384,13 +384,88 @@ const updateUserCoverImage = asyncHandler(async (req, res) => {
         coverImage: coverImage.url,
       },
     },
-    { new: true }
+    { new: true },
   ).select("-password -refreshToken");
 
   res
     .status(200)
     .json(new ApiResponse(200, user, "Cover image updated successfully"));
 });
+
+const getUserChannelProfile = asynHandler(async (req, res) => {
+  //NOTE: Returns us data from the url
+  const { username } = req.params;
+
+  if (!username?.trim()) {
+    throw new ApiError(400, "Username is required");
+  }
+
+  const channel = await User.aggregate([
+    {
+      $match: {
+        username: username?.toLowerCase(),
+      },
+    },
+    {
+      $lookup: {
+        from: "subscriptions",
+        localField: "_id",
+        foreignField: "channel",
+        as: "subscribers",
+      },
+    },
+    {
+      $lookup: {
+        from: "subscriptions",
+        localField: "_id",
+        foreignField: "subscriber",
+        as: "subscribedTo",
+      },
+    },
+    {
+      $addFields: {
+        subscribersCount: {
+          $size: "$subscribers",
+        },
+        channelsSubscribedToCount: {
+          $size: "$subscribedTo",
+        },
+        isSubscribed: {
+          $cond: {
+            if: {
+              $in: [req.user?._id, "$subscribers.subscriber"],
+            },
+            then: true,
+            else: false,
+          },
+        },
+      },
+    },
+    {
+      //NOTE: Project only the neccesasry data.
+      $project: {
+        fullname: true, //NOTE: Can also se 1 for true or 0 for false,
+        username: true,
+        avatar: true,
+        subscribersCount: true,
+        channelsSubscribedToCount: true,
+        isSubscribed: true,
+        coverImage: true,
+        email: true,
+      },
+    },
+  ]);
+
+  console.log(channel);
+
+  if (!channel?.length) {
+    throw new ApiError(404, "Channel not found");
+  }
+
+  return res.status(200).json(new ApiResponse(200, channel[0]));
+});
+
+const getWatchHistory = asyncHandler(async (req, res) => {});
 
 export {
   registerUser,
