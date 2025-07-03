@@ -1,4 +1,4 @@
-# VIDTUBE ðŸŽ¥  
+# VIDTUBE 🎥  
 *A lightweight YouTube-style backend API built with Node.js, Express, and MongoDB.*
 
 ![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
@@ -9,13 +9,13 @@
 
 ---
 
-## ðŸ“¦ About the Project
+## 📦 About the Project
 
 **VIDTUBE** is a backend REST API designed to simulate core functionalities of a video sharing platform like YouTube. It provides robust features for user registration, authentication, video uploads, profile management, and error handling â€” all while following MVC architecture and RESTful principles.
 
 ---
 
-## ðŸš€ Tech Stack
+## 🚀 Tech Stack
 
 - **Node.js** & **Express.js** â€“ Web server and routing
 - **MongoDB** & **Mongoose** â€“ NoSQL database and ODM
@@ -25,7 +25,7 @@
 
 ---
 
-## ðŸ“ Project Structure (MVC)
+## 📁 Project Structure (MVC)
 
 ```
 VIDTUBE/
