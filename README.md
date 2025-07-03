@@ -156,9 +156,9 @@ This project is open-source and available under the MIT License.
 
 ## 📌 Future Features (Planned)
 
-- [] Comments & likes system
-- [] Subscriptions
-- [] Admin panel & moderation tools
+- [ ] Comments & likes system
+- [ ] Subscriptions
+- [ ] Admin panel & moderation tools
 
 ---
 
