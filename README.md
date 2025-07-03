@@ -11,17 +11,17 @@
 
 ## 📦 About the Project
 
-**VIDTUBE** is a backend REST API designed to simulate core functionalities of a video sharing platform like YouTube. It provides robust features for user registration, authentication, video uploads, profile management, and error handling â€” all while following MVC architecture and RESTful principles.
+**VIDTUBE** is a backend REST API designed to simulate core functionalities of a video sharing platform like YouTube. It provides robust features for user registration, authentication, video uploads, profile management, and error handling - all while following MVC architecture and RESTful principles.
 
 ---
 
 ## 🚀 Tech Stack
 
-- **Node.js** & **Express.js** â€“ Web server and routing
-- **MongoDB** & **Mongoose** â€“ NoSQL database and ODM
-- **Multer** â€“ File uploads (avatars, profile pictures)
-- **Winston** & **Morgan** â€“ Logging and error tracking
-- **Postman** â€“ API testing and documentation
+- **Node.js** & **Express.js** - Web server and routing
+- **MongoDB** & **Mongoose** - NoSQL database and ODM
+- **Multer** - File uploads (avatars, profile pictures) to Cloudinary
+- **Winston** & **Morgan** - Logging and error tracking
+- **Postman** - API testing and documentation
 
 ---
 
@@ -70,7 +70,7 @@ VIDTUBE/
 - ✅ **User Authentication** (JWT-based)
 - ✅ **Video Uploads** (Metadata only, no actual video streaming)
 - ✅ **User Profile Management**
-- ✅ **Avatar/Profile Image Upload** (via Multer)
+- ✅ **Avatar/Profile Image Upload** (via Multer then uploaded to Cloudinary)
 - ✅ **Error Handling & Logging** (Winston + Morgan)
 - ✅ **RESTful API Design**
 - ✅ **API Testing via Postman**
@@ -82,8 +82,8 @@ VIDTUBE/
 ### 1. Clone the Repo
 
 ```bash
-git clone https://github.com/yourusername/vidtube-backend.git
-cd vidtube-backend
+git clone https://github.com/DevDad-Main/VIDTUBE.git
+cd VIDTUBE
 ```
 
 ### 2. Install Dependencies
@@ -111,9 +111,7 @@ npm run dev
 
 ---
 
-
-
- Author
+🧑‍💻 Author
 
 Olly – Aspiring Junior Backend Developer
 📧 [softwaredevdad@gmail.com]
