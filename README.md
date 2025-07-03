@@ -84,7 +84,7 @@ VIDTUBE/
 ```bash
 git clone https://github.com/yourusername/vidtube-backend.git
 cd vidtube-backend
-
+```
 
 ### 2. Install Dependencies
 
@@ -111,62 +111,12 @@ npm run dev
 
 ---
 
-📮 Example API Endpoints
-
-Method	Endpoint	Description
-
-POST	/api/auth/register	Register a new user
-POST	/api/auth/login	Login and get token
-GET	/api/users/:id	Get user profile
-PUT	/api/users/:id	Update profile & avatar
-POST	/api/videos/	Upload a new video metadata
-GET	/api/videos/	Get all videos
 
 
+ Author
 
----
-
-🛠 Error Handling
-
-Morgan logs HTTP request details.
-
-Winston handles application-level errors and logs them to the console (and optionally files).
-
-Custom middleware catches unhandled routes and errors.
-
-
-
----
-
-📤 File Uploads
-
-User avatars and profile pictures are uploaded via Multer.
-
-Files are stored in the /uploads directory with unique filenames.
-
-
-
----
-
-📌 Future Features (Planned)
-
-Video streaming support
-
-Comments & likes system
-
-Subscriptions
-
-Admin panel & moderation tools
-
-
-
----
-
-🧑‍💻 Author
-
-Olly – Backend Developer
-📧 [your.email@example.com]
-🌐 [Portfolio or LinkedIn/GitHub link]
+Olly – Aspiring Junior Backend Developer
+📧 [softwaredevdad@gmail.com]
 
 
 ---
@@ -177,8 +127,6 @@ This project is open-source and available under the MIT License.
 
 
 ---
-
-Would you like me to turn this into a downloadable `.md` file for you or help you customize it further (e.g., Postman docs link, adding badges)?
 
 6 Example API Endpoints
 
@@ -193,7 +141,7 @@ Would you like me to turn this into a downloadable `.md` file for you or help yo
 
 ---
 
-## ðŸ›  Error Handling
+## 🛠️ Error Handling
 
 - **Morgan** logs HTTP request details.
 - **Winston** handles application-level errors and logs them to the console (and optionally files).
@@ -201,31 +149,29 @@ Would you like me to turn this into a downloadable `.md` file for you or help yo
 
 ---
 
-## ðŸ“¤ File Uploads
+## 📤 File Uploads
 
 - User avatars and profile pictures are uploaded via **Multer**.
-- Files are stored in the `/uploads` directory with unique filenames.
+- Files are stored in the Cloudinwry Databse with unique filenames.
 
 ---
 
-## ðŸ“Œ Future Features (Planned)
+## 📌 Future Features (Planned)
 
-- Video streaming support
-- Comments & likes system
-- Subscriptions
-- Admin panel & moderation tools
-
----
-
-## ðŸ§‘â€ðŸ’» Author
-
-**Olly** â€“ *Backend Developer*  
-ðŸ“§ [your.email@example.com]  
-ðŸŒ [Portfolio or LinkedIn/GitHub link]
+- [] Comments & likes system
+- [] Subscriptions
+- [] Admin panel & moderation tools
 
 ---
 
-## ðŸ“ƒ License
+## 🧑‍💻 Author
+
+**Olly** - *Backend Developer*  
+📨 [softwaredevdad@gmail.com]  
+
+---
+
+## 🪪 License
 
 This project is open-source and available under the [MIT License](LICENSE).
 
