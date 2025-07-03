@@ -25,45 +25,66 @@
 
 ---
 
-## 📁 Project Structure (MVC)
+## 📁 Project Structure (MVC)
 
 ```
 VIDTUBE/
-â”‚
-â”œâ”€â”€ config/             # DB connection, logger setup
-â”œâ”€â”€ controllers/        # Route logic
-â”œâ”€â”€ middleware/         # Error handlers, auth checks, etc.
-â”œâ”€â”€ models/             # Mongoose schemas
-â”œâ”€â”€ routes/             # All endpoint definitions
-â”œâ”€â”€ uploads/            # Stored user images (avatars/profile pics)
-â”œâ”€â”€ utils/              # Reusable utilities (e.g., error handlers)
-â”œâ”€â”€ app.js              # Main application entry
-â”œâ”€â”€ .env                # Environment variables
-â””â”€â”€ README.md
+│
+├── config/              ──┐
+│   └── db.js               # Database connection setup
+│   └── logger.js           # Winston logging configuration
+│
+├── controllers/         ──┐
+│   └── auth.controller.js  # Auth logic
+│   └── video.controller.js # Video logic
+│   └── user.controller.js  # User profile logic
+│
+├── middleware/          ──┐
+│   └── authMiddleware.js   # JWT validation
+│   └── errorHandler.js     # Global error handler
+│
+├── models/              ──┐
+│   └── User.js             # User schema
+│   └── Video.js            # Video schema
+│
+├── routes/              ──┐
+│   └── auth.routes.js      # Auth routes
+│   └── video.routes.js     # Video routes
+│   └── user.routes.js      # User routes
+│
+├── uploads/             ──┐
+│   └── avatars/            # Uploaded profile pictures
+│
+├── utils/               ──┐
+│   └── generateToken.js    # JWT helper
+│
+├── .env                   # Environment variables
+├── app.js                 # App entry point
+└── README.md              # Project documentation
 ```
 
 ---
 
-## ðŸ” Core Features
+## 🔐 Core Features
 
-- âœ… **User Authentication** (JWT-based)
-- âœ… **Video Uploads** (Metadata only, no actual video streaming)
-- âœ… **User Profile Management**
-- âœ… **Avatar/Profile Image Upload** (via Multer)
-- âœ… **Error Handling & Logging** (Winston + Morgan)
-- âœ… **RESTful API Design**
-- âœ… **API Testing via Postman**
+- ✅ **User Authentication** (JWT-based)
+- ✅ **Video Uploads** (Metadata only, no actual video streaming)
+- ✅ **User Profile Management**
+- ✅ **Avatar/Profile Image Upload** (via Multer)
+- ✅ **Error Handling & Logging** (Winston + Morgan)
+- ✅ **RESTful API Design**
+- ✅ **API Testing via Postman**
 
 ---
 
-## ðŸ§ª Running Locally
+## 🧪 Running Locally
 
 ### 1. Clone the Repo
 
 ```bash
 git clone https://github.com/yourusername/vidtube-backend.git
 cd vidtube-backend
-```
+
 
 ### 2. Install Dependencies
 
@@ -87,9 +108,79 @@ npm run dev
 
 > The API will be live at `http://localhost:5000`
 
+
 ---
 
-## ðŸ“® Example API Endpoints
+📮 Example API Endpoints
+
+Method	Endpoint	Description
+
+POST	/api/auth/register	Register a new user
+POST	/api/auth/login	Login and get token
+GET	/api/users/:id	Get user profile
+PUT	/api/users/:id	Update profile & avatar
+POST	/api/videos/	Upload a new video metadata
+GET	/api/videos/	Get all videos
+
+
+
+---
+
+🛠 Error Handling
+
+Morgan logs HTTP request details.
+
+Winston handles application-level errors and logs them to the console (and optionally files).
+
+Custom middleware catches unhandled routes and errors.
+
+
+
+---
+
+📤 File Uploads
+
+User avatars and profile pictures are uploaded via Multer.
+
+Files are stored in the /uploads directory with unique filenames.
+
+
+
+---
+
+📌 Future Features (Planned)
+
+Video streaming support
+
+Comments & likes system
+
+Subscriptions
+
+Admin panel & moderation tools
+
+
+
+---
+
+🧑‍💻 Author
+
+Olly – Backend Developer
+📧 [your.email@example.com]
+🌐 [Portfolio or LinkedIn/GitHub link]
+
+
+---
+
+📃 License
+
+This project is open-source and available under the MIT License.
+
+
+---
+
+Would you like me to turn this into a downloadable `.md` file for you or help you customize it further (e.g., Postman docs link, adding badges)?
+
+6 Example API Endpoints
 
 | Method | Endpoint               | Description                 |
 |--------|------------------------|-----------------------------|
