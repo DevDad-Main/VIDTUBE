@@ -37,7 +37,7 @@ const videoSchema = new Schema(
     },
   },
   //NOTE: This property tells mongoose to assign createdAt nd updatedAt field to your scheme, type will be Date
-  { timestamps: true }
+  { timestamps: true },
 );
 
 videoSchema.plugin(mongooseAggregatePaginate);
