@@ -13,7 +13,7 @@ connectDB()
   .then(
     app.listen(PORT, () => {
       console.log(`Server is running on Port:${PORT}`);
-    })
+    }),
   )
   .catch((err) => {
     console.log(`MongodDB Connection Error`, err);

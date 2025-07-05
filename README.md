@@ -1,5 +1,6 @@
-# VIDTUBE 🎥  
-*A lightweight YouTube-style backend API built with Node.js, Express, and MongoDB.*
+# VIDTUBE 🎥
+
+_A lightweight YouTube-style backend API built with Node.js, Express, and MongoDB._
 
 ![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
 ![Express.js](https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white)
@@ -108,7 +109,6 @@ npm run dev
 
 > The API will be live at `http://localhost:5000`
 
-
 ---
 
 🧑‍💻 Author
@@ -116,26 +116,24 @@ npm run dev
 Olly – Aspiring Junior Backend Developer
 📧 [softwaredevdad@gmail.com]
 
-
 ---
 
 📃 License
 
 This project is open-source and available under the MIT License.
 
-
 ---
 
 6 Example API Endpoints
 
-| Method | Endpoint               | Description                 |
-|--------|------------------------|-----------------------------|
-| POST   | `/api/auth/register`   | Register a new user         |
-| POST   | `/api/auth/login`      | Login and get token         |
-| GET    | `/api/users/:id`       | Get user profile            |
-| PUT    | `/api/users/:id`       | Update profile & avatar     |
-| POST   | `/api/videos/`         | Upload a new video metadata |
-| GET    | `/api/videos/`         | Get all videos              |
+| Method | Endpoint             | Description                 |
+| ------ | -------------------- | --------------------------- |
+| POST   | `/api/auth/register` | Register a new user         |
+| POST   | `/api/auth/login`    | Login and get token         |
+| GET    | `/api/users/:id`     | Get user profile            |
+| PUT    | `/api/users/:id`     | Update profile & avatar     |
+| POST   | `/api/videos/`       | Upload a new video metadata |
+| GET    | `/api/videos/`       | Get all videos              |
 
 ---
 
@@ -150,7 +148,7 @@ This project is open-source and available under the MIT License.
 ## 📤 File Uploads
 
 - User avatars and profile pictures are uploaded via **Multer**.
-- Files are stored in the Cloudinwry Databse with unique filenames.
+- Files are stored in the Cloudinary Database with unique filenames.
 
 ---
 
@@ -164,8 +162,8 @@ This project is open-source and available under the MIT License.
 
 ## 🧑‍💻 Author
 
-**Olly** - *Backend Developer*  
-📨 [softwaredevdad@gmail.com]  
+**Olly** - _Backend Developer_  
+📨 [softwaredevdad@gmail.com]
 
 ---
 

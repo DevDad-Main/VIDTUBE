@@ -1,5 +1,17 @@
 import { Router } from "express";
-import { registerUser, logoutUser } from "../controllers/user.controllers.js";
+import {
+  registerUser,
+  logoutUser,
+  loginUser,
+  refreshAccessToken,
+  changeUserPassword,
+  getCurrentUser,
+  getUserChannelProfile,
+  updateAccountDetails,
+  updateUserAvatar,
+  updateUserCoverImage,
+  getWatchHistory,
+} from "../controllers/user.controllers.js";
 import { upload } from "../middlewares/multer.middlewares.js";
 import { verifyJWT } from "../middlewares/auth.middlewares.js";
 
@@ -19,6 +31,9 @@ This defines a POST route at the root path /register of this router.
 
 const router = Router();
 
+//NOTE: Unsecured routes
+//NOTE: This only means that they can be accessed by anyone.
+//NOTE: And we don't need to implement the JWT here
 router.route("/register").post(
   //NOTE: Using fields plural as we will want to get the Avatar and cover image from the user
   upload.fields([
@@ -31,10 +46,28 @@ router.route("/register").post(
       maxCount: 1,
     },
   ]),
-  registerUser
+  registerUser,
 );
+
+router.route("/login").post(loginUser);
+router.route("/refresh-token").post(refreshAccessToken);
 
 //NOTE: Secured routes
 //NOTE: Once we have verified with the JWT, then we call next() in our middleware which will pass over control to our logoutUser
-router.route("logout").post(verifyJWT, logoutUser);
+router.route("/logout").post(verifyJWT, logoutUser);
+router.route("/change-password").post(verifyJWT, changeUserPassword);
+router.route("/current-user").get(verifyJWT, getCurrentUser);
+router.route("/c/:username").get(verifyJWT, getUserChannelProfile);
+router.route("/update-account").patch(verifyJWT, updateAccountDetails);
+
+// As we are only uploading a single file we define it below
+router
+  .route("/avatar")
+  .patch(verifyJWT, upload.single("avatar"), updateUserAvatar);
+
+router
+  .route("/cover-image")
+  .patch(verifyJWT, upload.single("coverImage"), updateUserCoverImage);
+
+router.route("/history").get(verifyJWT, getWatchHistory);
 export default router;
