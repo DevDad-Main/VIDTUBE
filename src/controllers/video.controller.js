@@ -19,11 +19,44 @@ const publishAVideo = asyncHandler(async (req, res) => {
 const getVideoById = asyncHandler(async (req, res) => {
   const { videoId } = req.params;
   //TODO: get video by id
+
+  const video = await Video.find({
+    _id: mongoose.Types.ObjectId(videoId),
+  });
+
+  if (!video) {
+    throw new ApiError(404, "Video not found");
+  }
+
+  return res.status(200).json(new ApiResponse(200, "OK", video));
 });
 
 const updateVideo = asyncHandler(async (req, res) => {
   const { videoId } = req.params;
   //TODO: update video details like title, description, thumbnail
+  const { title, description, thumbnail } = req.body;
+
+  const updatedVideo = await Video.findByIdAndUpdate(
+    videoId,
+    {
+      title,
+      description,
+      thumbnail,
+    },
+    // new: true so it returns us the newely updated document
+    { new: true },
+  );
+
+  res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        "OK",
+        updatedVideo,
+        "Video details updated successfully",
+      ),
+    );
 });
 
 const deleteVideo = asyncHandler(async (req, res) => {
