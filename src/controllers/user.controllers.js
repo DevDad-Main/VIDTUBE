@@ -6,7 +6,22 @@ import {
   uploadOnCloudinary,
 } from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
-import { jwt } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
+
+const getUsers = asyncHandler(async (req, res) => {
+  //TODO: Get all users
+  const users = await User.find();
+
+  if (!users) {
+    throw new ApiError(404, "No users found");
+  }
+
+  console.log(users);
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, users, "Fetched all users successfully"));
+});
 
 const generateAccessAndRefreshToken = async (userId) => {
   try {
@@ -522,6 +537,7 @@ const getWatchHistory = asyncHandler(async (req, res) => {
 });
 
 export {
+  getUsers,
   registerUser,
   loginUser,
   refreshAccessToken,

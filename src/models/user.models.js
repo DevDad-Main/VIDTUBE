@@ -51,7 +51,7 @@ const userSchema = new Schema(
     },
   },
   //NOTE: This property tells mongoose to assign createdAt nd updatedAt field to your scheme, type will be Date
-  { timestamps: true }
+  { timestamps: true },
 );
 
 //NOTE: We want to before we store our users details we want to encrpyt there data, this could be with hashing and salting.
@@ -88,7 +88,7 @@ userSchema.methods.generateAccessToken = function () {
       fullname: this.fullname,
     },
     process.env.ACCESS_TOKEN_SECRET,
-    { expiresIn: process.env.ACCESS_TOKEN_EXPIRY }
+    { expiresIn: process.env.ACCESS_TOKEN_EXPIRY },
   );
 };
 
@@ -99,7 +99,7 @@ userSchema.methods.generateRefreshToken = function () {
       _id: this._id,
     },
     process.env.REFRESH_TOKEN_SECRET,
-    { expiresIn: process.env.REFRESH_TOKEN_EXPIRY }
+    { expiresIn: process.env.REFRESH_TOKEN_EXPIRY },
   );
 };
 //NOTE: Mongoose will go ahead and a create a document with this structure.

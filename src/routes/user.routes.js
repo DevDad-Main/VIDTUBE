@@ -1,5 +1,6 @@
 import { Router } from "express";
 import {
+  getUsers,
   registerUser,
   logoutUser,
   loginUser,
@@ -31,7 +32,7 @@ This defines a POST route at the root path /register of this router.
 
 const router = Router();
 
-//NOTE: Unsecured routes
+//#region Unsecured routes
 //NOTE: This only means that they can be accessed by anyone.
 //NOTE: And we don't need to implement the JWT here
 router.route("/register").post(
@@ -48,9 +49,10 @@ router.route("/register").post(
   ]),
   registerUser,
 );
-
-router.route("/login").post(loginUser);
+router.route("/all-users").get(getUsers);
+router.post("/login", loginUser);
 router.route("/refresh-token").post(refreshAccessToken);
+//#endregion
 
 //NOTE: Secured routes
 //NOTE: Once we have verified with the JWT, then we call next() in our middleware which will pass over control to our logoutUser
