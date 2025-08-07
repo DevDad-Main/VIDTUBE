@@ -4,6 +4,7 @@ import healthCheckRouter from "./routes/healthCheck.routes.js";
 import cookieParser from "cookie-parser";
 import userRouter from "./routes/user.routes.js";
 import { errorHandler } from "./middlewares/error.middlewares.js";
+import bodyParser from "body-parser";
 
 const app = express();
 
@@ -13,7 +14,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: "process.env.CORS_ORIGIN",
+    origin: process.env.CORS_ORIGIN,
     credentials: true,
   }),
 );
@@ -24,6 +25,7 @@ app.use(
     limit: "16kb",
   }),
 );
+app.use(bodyParser.json());
 //NOTE:
 app.use(
   express.urlencoded({

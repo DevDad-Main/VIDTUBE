@@ -65,8 +65,8 @@ userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
 
   //NOTE: Using bycrypt to has this password and salt it with 10 rounds
-  this.password = bcrypt.hash(this.password, 10);
-
+  this.password = await bcrypt.hash(this.password, 12);
+  console.log(this.password);
   next();
 });
 
@@ -92,7 +92,7 @@ userSchema.methods.generateAccessToken = function () {
   );
 };
 
-userSchema.methods.generateRefreshToken = function () {
+userSchema.method.generateRefreshToken = function () {
   //NOTE: Short lived access token -> We will define the expiry time
   jwt.sign(
     {

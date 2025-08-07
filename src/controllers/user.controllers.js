@@ -8,9 +8,11 @@ import {
 import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken";
 
+//#region Get Users
 const getUsers = asyncHandler(async (req, res) => {
   //TODO: Get all users
   const users = await User.find();
+  // const users = await User.find().select("username email fullname");
 
   if (!users) {
     throw new ApiError(404, "No users found");
@@ -22,7 +24,9 @@ const getUsers = asyncHandler(async (req, res) => {
     .status(200)
     .json(new ApiResponse(200, users, "Fetched all users successfully"));
 });
+//#endregion
 
+//#region Genereate Access And Refresh Token
 const generateAccessAndRefreshToken = async (userId) => {
   try {
     const user = await User.findById(userId);
@@ -45,10 +49,12 @@ const generateAccessAndRefreshToken = async (userId) => {
     );
   }
 };
+//#endregion
 
+//#region Register User
 const registerUser = asyncHandler(async (req, res) => {
   //NOTE: We also have the image files aswell avatar and cover image but they get handled seperately by multer
-  const { fullname: fullname, email, username, password } = req.body;
+  const { fullname, email, username, password } = req.body;
 
   //NOTE: Validation
 
@@ -151,16 +157,21 @@ const registerUser = asyncHandler(async (req, res) => {
     );
   }
 });
+//#endregion
 
+//#region Login User
 const loginUser = asyncHandler(async (req, res) => {
   //NOTE: Get data from the body.
 
+  // const email = req.body.email;
+  // const username = req.body.username;
+  // const password = req.body.password;
   const { email, username, password } = req.body;
 
-  //NOTE: Validation
-  if (![email, username, password].some((field) => field?.trim() === "")) {
-    throw new ApiError(400, "All Fields are required");
-  }
+  ////NOTE: Validation
+  //if (![email, username, password].some((field) => field?.trim() === "")) {
+  //  throw new ApiError(400, "All Fields are required");
+  //}
 
   const user = await User.findOne({
     $or: [
@@ -213,7 +224,9 @@ const loginUser = asyncHandler(async (req, res) => {
       )
   );
 });
+//#endregion
 
+//#region Logout User
 const logoutUser = asyncHandler(async (req, res) => {
   await User.findByIdAndUpdate(
     req.user._id,
@@ -243,7 +256,9 @@ const logoutUser = asyncHandler(async (req, res) => {
       .json(new ApiResponse(200, "Logout successful"))
   );
 });
+//#endregion
 
+//#region Refresh Token
 const refreshAccessToken = asyncHandler(async (req, res) => {
   //NOTE: This will be stored in our cookies, but could also potentially come from our body aswell
   //NOTE: If it's a mobile app then it will be coming from the body as apps dont have cookies
@@ -294,7 +309,9 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
       );
   } catch (error) {}
 });
+//#endregion
 
+//#region Change User Password
 const changeUserPassword = asyncHandler(async (req, res) => {
   //NOTE: Find the user and then we need to access the password and get the info from the frontend
   //NOTE: then we can get the newely requested password and update our db with that password
@@ -319,13 +336,17 @@ const changeUserPassword = asyncHandler(async (req, res) => {
     .status(200)
     .json(new ApiResponse(200, {}, "Password changed successfully"));
 });
+//#endregion
 
+//#region Get Current User
 const getCurrentUser = asyncHandler(async (req, res) => {
   return res
     .status(200)
     .json(new ApiResponse(200, req.user, "Current user details"));
 });
+//#endregion
 
+//#region Update User Account Details
 //NOTE: We don't have to allow updating everything, maybe specific things like, email, username etc
 const updateAccountDetails = asyncHandler(async (req, res) => {
   const { fullname, email } = req.body;
@@ -349,7 +370,9 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
     .status(200)
     .join(new ApiResponse(200, user, "Account details updated successfully"));
 });
+//#endregion
 
+//#region Update User Avatar
 const updateUserAvatar = asyncHandler(async (req, res) => {
   const avatarLocalPath = req.file?.path;
 
@@ -378,7 +401,9 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
     .status(200)
     .json(new ApiResponse(200, user, "Avatar updated successfully"));
 });
+//#endregion
 
+//#region Update User Cover Image
 const updateUserCoverImage = asyncHandler(async (req, res) => {
   const coverImageLocalPath = req.file?.path;
 
@@ -406,7 +431,9 @@ const updateUserCoverImage = asyncHandler(async (req, res) => {
     .status(200)
     .json(new ApiResponse(200, user, "Cover image updated successfully"));
 });
+//#endregion
 
+//#region Get User Channel Profile
 const getUserChannelProfile = asyncHandler(async (req, res) => {
   //NOTE: Returns us data from the url
   const { username } = req.params;
@@ -459,7 +486,7 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
     {
       //NOTE: Project only the neccesasry data.
       $project: {
-        fullname: true, //NOTE: Can also se 1 for true or 0 for false,
+        fullname: true, //NOTE: Can also say 1 for true or 0 for false,
         username: true,
         avatar: true,
         subscribersCount: true,
@@ -479,7 +506,9 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
 
   return res.status(200).json(new ApiResponse(200, channel[0]));
 });
+//#endregion
 
+//#region Get Watch History
 const getWatchHistory = asyncHandler(async (req, res) => {
   const user = await User.aggregate([
     {
@@ -535,6 +564,7 @@ const getWatchHistory = asyncHandler(async (req, res) => {
       ),
     );
 });
+//#endregion
 
 export {
   getUsers,

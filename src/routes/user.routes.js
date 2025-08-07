@@ -49,11 +49,12 @@ router.route("/register").post(
   ]),
   registerUser,
 );
-router.route("/all-users").get(getUsers);
+router.get("/all-users", getUsers);
 router.post("/login", loginUser);
 router.route("/refresh-token").post(refreshAccessToken);
 //#endregion
 
+//#region Secured Routes
 //NOTE: Secured routes
 //NOTE: Once we have verified with the JWT, then we call next() in our middleware which will pass over control to our logoutUser
 router.route("/logout").post(verifyJWT, logoutUser);
@@ -72,4 +73,6 @@ router
   .patch(verifyJWT, upload.single("coverImage"), updateUserCoverImage);
 
 router.route("/history").get(verifyJWT, getWatchHistory);
+//#endregion
+
 export default router;
