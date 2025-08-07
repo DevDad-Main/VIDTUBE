@@ -1,6 +1,9 @@
 import mongoose, { Schema } from "mongoose";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const userSchema = new Schema(
   {
@@ -71,16 +74,16 @@ userSchema.pre("save", async function (next) {
 });
 
 //NOTE: Returns a true or false wether the password is correct or not
-userSchema.methods.isPasswordCorrect = async function (password) {
+userSchema.method("isPasswordCorrect", async function (password) {
   return await bcrypt.compare(password, this.password);
-};
+});
 
 //NOTE: Wheneevr the user has logged in we will send a refresh token and access token.
 //NOTE: JWT Tokens
 
-userSchema.methods.generateAccessToken = function () {
+userSchema.method("generateAccessToken", function () {
   //NOTE: Short lived access token -> We will define the expiry time
-  jwt.sign(
+  return jwt.sign(
     {
       _id: this._id,
       email: this.email,
@@ -90,18 +93,19 @@ userSchema.methods.generateAccessToken = function () {
     process.env.ACCESS_TOKEN_SECRET,
     { expiresIn: process.env.ACCESS_TOKEN_EXPIRY },
   );
-};
+});
 
-userSchema.method.generateRefreshToken = function () {
+userSchema.method("generateRefreshToken", function () {
   //NOTE: Short lived access token -> We will define the expiry time
-  jwt.sign(
+  return jwt.sign(
     {
       _id: this._id,
     },
     process.env.REFRESH_TOKEN_SECRET,
     { expiresIn: process.env.REFRESH_TOKEN_EXPIRY },
   );
-};
+});
+
 //NOTE: Mongoose will go ahead and a create a document with this structure.
 //NOTE: If this document dosent exist, it will create it.
 //NOTE: The structure it should follow is the userSchema

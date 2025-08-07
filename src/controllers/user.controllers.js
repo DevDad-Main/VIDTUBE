@@ -7,6 +7,9 @@ import {
 } from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 //#region Get Users
 const getUsers = asyncHandler(async (req, res) => {
@@ -26,7 +29,7 @@ const getUsers = asyncHandler(async (req, res) => {
 });
 //#endregion
 
-//#region Genereate Access And Refresh Token
+//#region Generate Access And Refresh Token
 const generateAccessAndRefreshToken = async (userId) => {
   try {
     const user = await User.findById(userId);
@@ -38,6 +41,8 @@ const generateAccessAndRefreshToken = async (userId) => {
     const accessToken = user.generateAccessToken();
     const refreshToken = user.generateRefreshToken();
 
+    // console.log(accessToken, refreshToken);
+
     user.refreshToken = refreshToken;
     await user.save({ validateBeforeSave: false });
 
@@ -46,6 +51,7 @@ const generateAccessAndRefreshToken = async (userId) => {
     throw new ApiError(
       500,
       "Something went wrong while generating access and refresh tokens",
+      error,
     );
   }
 };
@@ -189,9 +195,9 @@ const loginUser = asyncHandler(async (req, res) => {
   }
 
   //NOTE: Validate the password
-  const isPasswordValid = await user.isPasswordValid(password);
+  const isPassValid = await user.isPasswordCorrect(password);
 
-  if (!isPasswordValid) {
+  if (!isPassValid) {
     throw new ApiError(400, "Invalid Credentials");
   }
 
