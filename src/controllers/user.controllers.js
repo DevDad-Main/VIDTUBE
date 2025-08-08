@@ -112,22 +112,12 @@ const registerUser = asyncHandler(async (req, res) => {
   // }
 
   let avatar;
-
   let coverImage;
-  try {
-    coverImage = await uploadOnCloudinary(coverImageLocalPath);
-    console.log("Uploaded Cover Image", coverImage);
-  } catch (error) {
-    console.log("Error uploading avatar ", error);
-    throw new ApiError(500, "Failed to upload cover image.");
-  }
 
   try {
     const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
     const user = new User({
       fullname: fullname,
-      avatar: avatar?.url || "",
-      coverImage: coverImage?.url || "",
       email: email,
       password: hashedPassword,
       username: username.toLowerCase(),
@@ -145,15 +135,34 @@ const registerUser = asyncHandler(async (req, res) => {
     //   throw new ApiError(500, "Something went wrong while registering a user");
     // }
     //#endregion
+
+    //NOTE: We save now so we save the main user data to our db and then we store our folderId in our pre save hook. Accessible below for the image uploads
     await user.save();
 
+    //#region Avatar Upload -> They can be not set by default
     try {
-      avatar = await uploadOnCloudinary(avatarLocalPath, user._id.toString());
+      avatar = await uploadOnCloudinary(avatarLocalPath, user.folderId);
       console.log("Uploaded avatar", avatar);
     } catch (error) {
       console.log("Error uploading avatar ", error);
       throw new ApiError(500, "Failed to upload avatar.");
     }
+    //#endregion
+
+    //#region Cover Image Upload -> They can be not set by default
+    try {
+      coverImage = await uploadOnCloudinary(coverImageLocalPath, user.folderId);
+      console.log("Uploaded Cover Image", coverImage);
+    } catch (error) {
+      console.log("Error uploading avatar ", error);
+      throw new ApiError(500, "Failed to upload cover image.");
+    }
+    //#endregion
+
+    user.avatar = avatar?.url || "";
+    user.coverImage = coverImage?.url || "";
+
+    await user.save();
     //NOTE: Returning a response to the front end
     return res
       .status(201)

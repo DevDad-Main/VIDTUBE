@@ -1,7 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-
+import { v7 as uuidv7 } from "uuid";
 dotenv.config();
 
 //#region User Schema
@@ -34,7 +34,7 @@ const userSchema = new Schema(
     },
     avatar: {
       type: String, //Cloudinary URL
-      required: true,
+      // required: true,
     },
     coverImage: {
       type: String, //Cloudinary URL
@@ -61,6 +61,14 @@ const userSchema = new Schema(
   { timestamps: true },
 );
 //#endregion
+
+userSchema.pre("save", function (next) {
+  if (!this.folderId) {
+    this.folderId = uuidv7();
+  }
+  console.log(this.folderId);
+  next();
+});
 
 //#region Generate Access Token
 //NOTE: Whenever the user has logged in we will send a refresh token and access token.

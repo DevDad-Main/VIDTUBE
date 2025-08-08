@@ -13,7 +13,7 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET, // Click 'View API Keys' above to copy your API secret
 });
 
-const uploadOnCloudinary = async (localFilePath, userId) => {
+const uploadOnCloudinary = async (localFilePath, folderId) => {
   try {
     if (!localFilePath) return null;
     console.log(localFilePath);
@@ -21,7 +21,7 @@ const uploadOnCloudinary = async (localFilePath, userId) => {
     const response = await cloudinary.uploader.upload(localFilePath, {
       //NOTE: This is handy as it will automatically figure out the file type
       // folder: `VIDTUBE/${userId}`,
-      folder: `VIDTUBE/${userId}`,
+      folder: `VIDTUBE/${folderId}`,
       resource_type: "auto",
     });
 
