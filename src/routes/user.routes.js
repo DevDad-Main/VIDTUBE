@@ -38,7 +38,6 @@ const router = Router();
 //NOTE: And we don't need to implement the JWT here
 router.post(
   "/register",
-  registerUserValidation,
   //NOTE: Using fields plural as we will want to get the Avatar and cover image from the user
   upload.fields([
     {
@@ -50,6 +49,7 @@ router.post(
       maxCount: 1,
     },
   ]),
+  registerUserValidation,
   registerUser,
 );
 router.get("/all-users", getUsers);

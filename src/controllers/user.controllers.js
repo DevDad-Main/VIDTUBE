@@ -1,4 +1,5 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
+import { validationResult } from "express-validator";
 import { ApiError } from "../utils/ApiError.js";
 import { User } from "../models/user.models.js";
 import {
@@ -62,24 +63,37 @@ const generateAccessAndRefreshToken = async (userId) => {
 //#region Register User
 const registerUser = asyncHandler(async (req, res) => {
   //NOTE: We also have the image files aswell avatar and cover image but they get handled seperately by multer
+
+  const errors = validationResult(req);
   const { fullname, email, username, password } = req.body;
 
-  //NOTE: Check to see if the user already exists, we will import in the User from mongo that we made using mongoose
-  //NOTE: We can find the user by multiple queries like .findOne({username or email etc})
-  const doesUserExist = await User.findOne({
-    $or: [
-      {
-        username,
-      },
-      {
-        email,
-      },
-    ],
-  });
-
-  if (doesUserExist) {
-    throw new ApiError(409, "User with email or username already exists");
+  if (!errors.isEmpty()) {
+    throw new ApiError(400, "Error validating user input", errors.array());
   }
+
+  //#region Old Validation Code
+  ////NOTE: Check to see if the user already exists, we will import in the User from mongo that we made using mongoose
+  ////NOTE: We can find the user by multiple queries like .findOne({username or email etc})
+  //const doesUserExist = await User.findOne({
+  //  $or: [
+  //    {
+  //      username,
+  //    },
+  //    {
+  //      email,
+  //    },
+  //  ],
+  //});
+  //
+  //if (doesUserExist) {
+  //  throw new ApiError(
+  //    409,
+  //    "User with email or username already exists",
+  //    // !errors.isEmpty() ? errors.array() : "",
+  //  );
+  //}
+  //#endregion
+
   console.warn(req.files);
   const avatarLocalPath = req.files?.avatar?.[0]?.path;
   const coverImageLocalPath = req.files?.coverImage?.[0]?.path;
@@ -124,6 +138,7 @@ const registerUser = asyncHandler(async (req, res) => {
       username: username.toLowerCase(),
     });
 
+    //#region Old Query for checking if user exists
     //NOTE: Extra query from the DB to make sure we are not maing a duplicate
     //NOTE: Also .select()we are specifing the data we dont want to be returned
     // const createdUser = await User.findById(user._id).select(
@@ -134,8 +149,8 @@ const registerUser = asyncHandler(async (req, res) => {
     //   //NOTE: Server Error
     //   throw new ApiError(500, "Something went wrong while registering a user");
     // }
-
-    user.save();
+    //#endregion
+    await user.save();
 
     //NOTE: Returning a response to the front end
     return res
