@@ -8,6 +8,8 @@ import {
 import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import { SALT_ROUNDS } from "../constants.js";
+import bcrypt from "bcrypt";
 
 dotenv.config();
 
@@ -62,17 +64,6 @@ const registerUser = asyncHandler(async (req, res) => {
   //NOTE: We also have the image files aswell avatar and cover image but they get handled seperately by multer
   const { fullname, email, username, password } = req.body;
 
-  //NOTE: Validation
-
-  //NOTE: Handy way instead of manually checking each field in a seperate if statement etc.
-  //NOTE: The some will return the first one that does not meet the requiremnets, but in our case because the server is always running
-  //NOTE: We will just carry on to check if the next field is missing etc
-  // if (
-  //   [fullname, username, email, password].some((field) => field?.trim() === "")
-  // ) {
-  //   throw new ApiError(400, "All Fields are required");
-  // }
-
   //NOTE: Check to see if the user already exists, we will import in the User from mongo that we made using mongoose
   //NOTE: We can find the user by multiple queries like .findOne({username or email etc})
   const doesUserExist = await User.findOne({
@@ -123,32 +114,35 @@ const registerUser = asyncHandler(async (req, res) => {
   }
 
   try {
+    const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
     const user = new User({
       fullname: fullname,
       avatar: avatar.url,
       coverImage: coverImage?.url || "",
-      email,
-      password,
+      email: email,
+      password: hashedPassword,
       username: username.toLowerCase(),
     });
 
     //NOTE: Extra query from the DB to make sure we are not maing a duplicate
     //NOTE: Also .select()we are specifing the data we dont want to be returned
-    const createdUser = await User.findById(user._id).select(
-      "-password -refreshToken",
-    );
+    // const createdUser = await User.findById(user._id).select(
+    //   "-password -refreshToken",
+    // );
+    //
+    // if (!createdUser) {
+    //   //NOTE: Server Error
+    //   throw new ApiError(500, "Something went wrong while registering a user");
+    // }
 
-    if (!createdUser) {
-      //NOTE: Server Error
-      throw new ApiError(500, "Something went wrong while registering a user");
-    }
+    user.save();
 
     //NOTE: Returning a response to the front end
     return res
       .status(201)
-      .json(new ApiResponse(200, createdUser, "User registered successfully"));
+      .json(new ApiResponse(200, user, "User registered successfully"));
   } catch (error) {
-    console.log("User Creation Failed");
+    console.log("User Creation Failed: ", error);
 
     if (avatar) {
       await deleteFromCloudinary(avatar.public_id);
@@ -160,6 +154,7 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new ApiError(
       500,
       "Something went wrong while registering a new user and image files were deleted",
+      error,
     );
   }
 });
@@ -190,15 +185,18 @@ const loginUser = asyncHandler(async (req, res) => {
     ],
   });
 
+  console.log(user);
+
   if (!user) {
     throw new ApiError(404, "User not found");
   }
 
+  console.log(user.password);
   //NOTE: Validate the password
-  const isPassValid = await user.isPasswordCorrect(password);
+  const isPassValid = await bcrypt.compare(password, user.password);
 
   if (!isPassValid) {
-    throw new ApiError(400, "Invalid Credentials");
+    throw new ApiError(400, "Invalid Password");
   }
 
   const { accessToken, refreshToken } = await generateAccessAndRefreshToken(
@@ -327,17 +325,16 @@ const changeUserPassword = asyncHandler(async (req, res) => {
 
   const user = await User.findById(req.user?._id);
 
-  const isPasswordValid = await user.isPasswordCorrect(oldPassword);
+  const isPasswordValid = await bcrypt.compare(oldPassword, user.password);
 
   if (!isPasswordValid) {
     throw new ApiError(401, "Old password is incorrect");
   }
-  //NOTE: We can assign it like so.
 
-  user.password = newPassword;
-  //NOTE: Then we can trigger the user.save and that triggers
-  //NOTE: The pre hook we have on our user model, which saves and hashes
-  //NOTE: our password
+  //WARN: Rehash password before saving back to the DB
+  const hashedPassword = await bcrypt.hash(newPassword, SALT_ROUNDS);
+
+  user.password = hashedPassword;
   const updatedPassword = await user.save({ validateBeforeSave: true });
 
   console.log(updatedPassword);
