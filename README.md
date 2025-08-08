@@ -26,45 +26,59 @@ _A lightweight YouTube-style backend API built with Node.js, Express, and MongoD
 
 ---
 
-## 📁 Project Structure (MVC)
+<details>
 
-```
-VIDTUBE/
-│
-├── config/              ──┐
-│   └── db.js               # Database connection setup
-│   └── logger.js           # Winston logging configuration
-│
-├── controllers/         ──┐
-│   └── auth.controller.js  # Auth logic
-│   └── video.controller.js # Video logic
-│   └── user.controller.js  # User profile logic
-│
-├── middleware/          ──┐
-│   └── authMiddleware.js   # JWT validation
-│   └── errorHandler.js     # Global error handler
-│
-├── models/              ──┐
-│   └── User.js             # User schema
-│   └── Video.js            # Video schema
-│
-├── routes/              ──┐
-│   └── auth.routes.js      # Auth routes
-│   └── video.routes.js     # Video routes
-│   └── user.routes.js      # User routes
-│
-├── uploads/             ──┐
-│   └── avatars/            # Uploaded profile pictures
-│
-├── utils/               ──┐
-│   └── generateToken.js    # JWT helper
-│
-├── .env                   # Environment variables
-├── app.js                 # App entry point
-└── README.md              # Project documentation
-```
+<summary>🌟 Featured Routes</summary>
 
----
+![User-Routes](./previews/Login-Route.png)
+![User-Routes](./previews/Logout-Route.png)
+![User-Routes](./previews/Register-Route.png)
+![User-Routes](./previews/Regiser-Validation.png)
+![User-Routes](./previews/Refresh-Token-Route.png)
+![User-Routes](./previews/Update-Account-Route.png)
+
+</details>
+
+<!---->
+<!-- ## 📁 Project Structure (MVC) -->
+<!---->
+<!-- ``` -->
+<!-- VIDTUBE/ -->
+<!-- │ -->
+<!-- ├── config/              ──┐ -->
+<!-- │   └── db.js               # Database connection setup -->
+<!-- │   └── logger.js           # Winston logging configuration -->
+<!-- │ -->
+<!-- ├── controllers/         ──┐ -->
+<!-- │   └── auth.controller.js  # Auth logic -->
+<!-- │   └── video.controller.js # Video logic -->
+<!-- │   └── user.controller.js  # User profile logic -->
+<!-- │ -->
+<!-- ├── middleware/          ──┐ -->
+<!-- │   └── authMiddleware.js   # JWT validation -->
+<!-- │   └── errorHandler.js     # Global error handler -->
+<!-- │ -->
+<!-- ├── models/              ──┐ -->
+<!-- │   └── User.js             # User schema -->
+<!-- │   └── Video.js            # Video schema -->
+<!-- │ -->
+<!-- ├── routes/              ──┐ -->
+<!-- │   └── auth.routes.js      # Auth routes -->
+<!-- │   └── video.routes.js     # Video routes -->
+<!-- │   └── user.routes.js      # User routes -->
+<!-- │ -->
+<!-- ├── uploads/             ──┐ -->
+<!-- │   └── avatars/            # Uploaded profile pictures -->
+<!-- │ -->
+<!-- ├── utils/               ──┐ -->
+<!-- │   └── generateToken.js    # JWT helper -->
+<!-- │ -->
+<!-- ├── .env                   # Environment variables -->
+<!-- ├── app.js                 # App entry point -->
+<!-- └── README.md              # Project documentation -->
+<!-- ``` -->
+
+## <!---->
 
 ## 🔐 Core Features
 
