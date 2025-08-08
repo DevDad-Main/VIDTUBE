@@ -28,7 +28,7 @@ _A lightweight YouTube-style backend API built with Node.js, Express, and MongoD
 
 <details>
 
-<summary>🌟 Featured Routes</summary>
+<summary>🌟 User Routes</summary>
 
 ![User-Routes](./previews/Login-Route.png)
 ![User-Routes](./previews/Logout-Route.png)
@@ -39,54 +39,13 @@ _A lightweight YouTube-style backend API built with Node.js, Express, and MongoD
 
 </details>
 
-<!---->
-<!-- ## 📁 Project Structure (MVC) -->
-<!---->
-<!-- ``` -->
-<!-- VIDTUBE/ -->
-<!-- │ -->
-<!-- ├── config/              ──┐ -->
-<!-- │   └── db.js               # Database connection setup -->
-<!-- │   └── logger.js           # Winston logging configuration -->
-<!-- │ -->
-<!-- ├── controllers/         ──┐ -->
-<!-- │   └── auth.controller.js  # Auth logic -->
-<!-- │   └── video.controller.js # Video logic -->
-<!-- │   └── user.controller.js  # User profile logic -->
-<!-- │ -->
-<!-- ├── middleware/          ──┐ -->
-<!-- │   └── authMiddleware.js   # JWT validation -->
-<!-- │   └── errorHandler.js     # Global error handler -->
-<!-- │ -->
-<!-- ├── models/              ──┐ -->
-<!-- │   └── User.js             # User schema -->
-<!-- │   └── Video.js            # Video schema -->
-<!-- │ -->
-<!-- ├── routes/              ──┐ -->
-<!-- │   └── auth.routes.js      # Auth routes -->
-<!-- │   └── video.routes.js     # Video routes -->
-<!-- │   └── user.routes.js      # User routes -->
-<!-- │ -->
-<!-- ├── uploads/             ──┐ -->
-<!-- │   └── avatars/            # Uploaded profile pictures -->
-<!-- │ -->
-<!-- ├── utils/               ──┐ -->
-<!-- │   └── generateToken.js    # JWT helper -->
-<!-- │ -->
-<!-- ├── .env                   # Environment variables -->
-<!-- ├── app.js                 # App entry point -->
-<!-- └── README.md              # Project documentation -->
-<!-- ``` -->
-
-## <!---->
-
 ## 🔐 Core Features
 
 - ✅ **User Authentication** (JWT-based)
 - ✅ **Video Uploads** (Metadata only, no actual video streaming)
 - ✅ **User Profile Management**
 - ✅ **Avatar/Profile Image Upload** (via Multer then uploaded to Cloudinary)
-- ✅ **Error Handling & Logging** (Winston + Morgan)
+- ✅ **Error Handling & Logging** (Custom Error middleware)
 - ✅ **RESTful API Design**
 - ✅ **API Testing via Postman**
 
@@ -110,9 +69,23 @@ npm install
 ### 3. Create a `.env` File
 
 ```env
-PORT=5000
-MONGODB_URI=your_mongodb_connection_string
-JWT_SECRET=your_jwt_secret
+PORT=3000
+
+MONGODB_URL=
+
+ACCESS_TOKEN_SECRET=
+ACCESS_TOKEN_EXPIRY="1hr"
+
+REFRESH_TOKEN_SECRET=
+REFRESH_TOKEN_EXPIRY="1hr"
+
+CORS_ORIGIN=["http://localhost:3000","http://localhost:3001"]
+
+NODE_ENV="development"
+
+CLOUDINARY_CLOUD_NAME=
+CLOUDINARY_API_KEY=
+CLOUDINARY_API_SECRET=
 ```
 
 ### 4. Start the Server
@@ -121,7 +94,7 @@ JWT_SECRET=your_jwt_secret
 npm run dev
 ```
 
-> The API will be live at `http://localhost:5000`
+> The API will be live at `http://localhost:3000`
 
 ---
 
@@ -140,21 +113,19 @@ This project is open-source and available under the MIT License.
 
 6 Example API Endpoints
 
-| Method | Endpoint             | Description                 |
-| ------ | -------------------- | --------------------------- |
-| POST   | `/api/auth/register` | Register a new user         |
-| POST   | `/api/auth/login`    | Login and get token         |
-| GET    | `/api/users/:id`     | Get user profile            |
-| PUT    | `/api/users/:id`     | Update profile & avatar     |
-| POST   | `/api/videos/`       | Upload a new video metadata |
-| GET    | `/api/videos/`       | Get all videos              |
+| Method | Endpoint                       | Description                 |
+| ------ | ------------------------------ | --------------------------- |
+| POST   | `/api/v1/users/register`       | Register a new user         |
+| POST   | `/api/v1/users/login`          | Login and get token         |
+| GET    | `/api/v1/users/:id`            | Get user profile            |
+| PUT    | `/api/v1/users/update-account` | Update profile & avatar     |
+| POST   | `/api/v1/users/new-video`      | Upload a new video metadata |
+| GET    | `/api/v1/users/videos`         | Get all videos              |
 
 ---
 
 ## 🛠️ Error Handling
 
-- **Morgan** logs HTTP request details.
-- **Winston** handles application-level errors and logs them to the console (and optionally files).
 - Custom middleware catches unhandled routes and errors.
 
 ---
