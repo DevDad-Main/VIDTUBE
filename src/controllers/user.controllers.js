@@ -247,8 +247,8 @@ const loginUser = asyncHandler(async (req, res) => {
 
 //#region Logout User
 const logoutUser = asyncHandler(async (req, res) => {
-  await User.findByIdAndUpdate(
-    req.user._id,
+  const user = await User.findByIdAndUpdate(
+    req.user?._id,
     {
       //NOTE: Allows us to set and change any property, in this case it will be the refresh token
       $set: {
@@ -272,7 +272,7 @@ const logoutUser = asyncHandler(async (req, res) => {
       //NOTE: Using a method called .clearCookie allowing us to clear the cookies one by one
       .clearCookie("refreshToken", options)
       //NOTE: Here we just send the default 200 resonse
-      .json(new ApiResponse(200, "Logout successful"))
+      .json(new ApiResponse(200, user, "Logout successful"))
   );
 });
 //#endregion
@@ -281,7 +281,7 @@ const logoutUser = asyncHandler(async (req, res) => {
 const refreshAccessToken = asyncHandler(async (req, res) => {
   //NOTE: This will be stored in our cookies, but could also potentially come from our body aswell
   //NOTE: If it's a mobile app then it will be coming from the body as apps dont have cookies
-  const { incomingRefreshToken } =
+  const incomingRefreshToken =
     req.cookies.refreshToken || req.body.refreshToken;
 
   if (!incomingRefreshToken) {
@@ -326,7 +326,9 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
           "Access token refreshed successfully",
         ),
       );
-  } catch (error) {}
+  } catch (error) {
+    console.log(error);
+  }
 });
 //#endregion
 
@@ -335,7 +337,6 @@ const changeUserPassword = asyncHandler(async (req, res) => {
   //NOTE: Find the user and then we need to access the password and get the info from the frontend
   //NOTE: then we can get the newely requested password and update our db with that password
 
-  console.log(req.body);
   const { oldPassword, newPassword } = req.body;
 
   const user = await User.findById(req.user?._id);
@@ -346,13 +347,16 @@ const changeUserPassword = asyncHandler(async (req, res) => {
     throw new ApiError(401, "Old password is incorrect");
   }
 
+  // Check if the passwords are the same otherwise return an error
+  if (oldPassword === newPassword) {
+    throw new ApiError(400, "New password must be different from old password");
+  }
+
   //WARN: Rehash password before saving back to the DB
   const hashedPassword = await bcrypt.hash(newPassword, SALT_ROUNDS);
 
   user.password = hashedPassword;
   const updatedPassword = await user.save({ validateBeforeSave: true });
-
-  console.log(updatedPassword);
 
   return res
     .status(200)

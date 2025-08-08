@@ -15,7 +15,10 @@ import {
 } from "../controllers/user.controllers.js";
 import { upload } from "../middlewares/multer.middlewares.js";
 import { verifyJWT } from "../middlewares/auth.middlewares.js";
-import { registerUserValidation } from "../utils/validation.utils.js";
+import {
+  registerUserValidation,
+  changePasswordValidation,
+} from "../utils/validation.utils.js";
 
 //NOTE:   Using router modules in Express is all about:
 
@@ -60,11 +63,16 @@ router.post("/refresh-token", refreshAccessToken);
 //#region Secured Routes
 //NOTE: Secured routes
 //NOTE: Once we have verified with the JWT, then we call next() in our middleware which will pass over control to our logoutUser
-router.route("/logout").post(verifyJWT, logoutUser);
-router.post("/change-password", verifyJWT, changeUserPassword);
-router.route("/current-user").get(verifyJWT, getCurrentUser);
-router.route("/c/:username").get(verifyJWT, getUserChannelProfile);
-router.route("/update-account").patch(verifyJWT, updateAccountDetails);
+router.post("/logout", verifyJWT, logoutUser);
+router.post(
+  "/change-password",
+  verifyJWT,
+  changePasswordValidation,
+  changeUserPassword,
+);
+router.get("/current-user", verifyJWT, getCurrentUser);
+router.get("/c/:username", verifyJWT, getUserChannelProfile);
+router.patch("/update-account", verifyJWT, updateAccountDetails);
 
 // As we are only uploading a single file we define it below
 router
@@ -75,7 +83,7 @@ router
   .route("/cover-image")
   .patch(verifyJWT, upload.single("coverImage"), updateUserCoverImage);
 
-router.route("/history").get(verifyJWT, getWatchHistory);
+router.get("/history", verifyJWT, getWatchHistory);
 //#endregion
 
 export default router;
