@@ -381,17 +381,19 @@ const getCurrentUser = asyncHandler(async (req, res) => {
 //#region Update User Account Details
 //NOTE: We don't have to allow updating everything, maybe specific things like, email, username etc
 const updateAccountDetails = asyncHandler(async (req, res) => {
-  const { fullname, email } = req.body;
+  const errors = validationResult(req);
+  const { fullname, username, email } = req.body;
 
-  if (!fullname || !email) {
-    throw new ApiError(400, "Fullname and email are missing");
+  if (!errors.isEmpty()) {
+    throw new ApiError(400, "Error validating user input", errors.array());
   }
 
   const user = await User.findByIdAndUpdate(
     req.user?._id,
     {
       $set: {
-        fullname,
+        fullname: fullname,
+        username: username,
         email: email,
       },
     },
@@ -400,7 +402,7 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
 
   res
     .status(200)
-    .join(new ApiResponse(200, user, "Account details updated successfully"));
+    .json(new ApiResponse(200, user, "Account details updated successfully"));
 });
 //#endregion
 

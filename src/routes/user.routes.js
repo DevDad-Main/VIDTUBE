@@ -18,6 +18,7 @@ import { verifyJWT } from "../middlewares/auth.middlewares.js";
 import {
   registerUserValidation,
   changePasswordValidation,
+  updateUserDetailsValidation,
 } from "../utils/validation.utils.js";
 
 //NOTE:   Using router modules in Express is all about:
@@ -72,7 +73,12 @@ router.post(
 );
 router.get("/current-user", verifyJWT, getCurrentUser);
 router.get("/c/:username", verifyJWT, getUserChannelProfile);
-router.patch("/update-account", verifyJWT, updateAccountDetails);
+router.patch(
+  "/update-account",
+  verifyJWT,
+  updateUserDetailsValidation,
+  updateAccountDetails,
+);
 
 // As we are only uploading a single file we define it below
 router
