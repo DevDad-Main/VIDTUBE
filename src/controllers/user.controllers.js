@@ -159,8 +159,21 @@ const registerUser = asyncHandler(async (req, res) => {
     }
     //#endregion
 
-    user.avatar = avatar?.url || "";
-    user.coverImage = coverImage?.url || "";
+    // user.avatar = avatar?.url || "";
+    user.avatar = avatar
+      ? {
+          url: avatar.secure_url,
+          public_id: avatar.public_id,
+        }
+      : null;
+
+    user.coverImage = coverImage
+      ? {
+          url: coverImage.secure_url,
+          public_id: coverImage.public_id,
+        }
+      : null;
+    // user.coverImage = coverImage?.url || "";
 
     await user.save();
     //NOTE: Returning a response to the front end
@@ -425,26 +438,49 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Avatar is missing");
   }
 
-  const avatar = await uploadOnCloudinary(avatarLocalPath);
-  console.log(req.file);
+  const loggedInUser = await User.findById(req.user?._id).select(
+    "avatar folderId",
+  );
 
-  if (!avatar.url) {
-    throw new ApiError(500, "Something went wrong");
+  if (!loggedInUser) {
+    throw new ApiError(404, "User not found");
   }
 
-  const user = await User.findByIdAndUpdate(
-    req.user?._id,
-    {
-      $set: {
-        avatar: avatar.url,
-      },
-    },
-    { new: true },
-  ).select("-password -refreshToken");
+  console.log("Logged in User: ", loggedInUser);
+
+  let newAvatar;
+  try {
+    newAvatar = await uploadOnCloudinary(
+      avatarLocalPath,
+      loggedInUser.folderId,
+    );
+    console.log("New Avatar: ", newAvatar);
+    if (!newAvatar.secure_url || !newAvatar.public_id) {
+      throw new ApiError(500, "Something went wrong retrieving avatar details");
+    }
+    console.log(req.file);
+
+    if (loggedInUser.avatar?.public_id) {
+      try {
+        await deleteFromCloudinary(loggedInUser.avatar.public_id);
+      } catch (error) {
+        console.warn("Failed to delete old avatar from Cloudinary");
+      }
+    }
+
+    loggedInUser.avatar = {
+      url: newAvatar.secure_url,
+      public_id: newAvatar.public_id,
+    };
+
+    await loggedInUser.save();
+  } catch (err) {
+    throw new ApiError(500, "Failed to update user avatar");
+  }
 
   res
     .status(200)
-    .json(new ApiResponse(200, user, "Avatar updated successfully"));
+    .json(new ApiResponse(200, loggedInUser, "Avatar updated successfully"));
 });
 //#endregion
 
@@ -456,25 +492,50 @@ const updateUserCoverImage = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Cover image is missing");
   }
 
-  const coverImage = await uploadOnCloudinary(coverImageLocalPath);
+  const loggedInUser = await User.findById(req.user?._id).select(
+    "coverImage folderId",
+  );
 
-  if (!coverImage.url) {
-    throw new ApiError(500, "Something went wrong");
+  if (!loggedInUser) {
+    throw new ApiError(404, "User not found");
   }
 
-  const user = await User.findByIdAndUpdate(
-    req.user?._id,
-    {
-      $set: {
-        coverImage: coverImage.url,
-      },
-    },
-    { new: true },
-  ).select("-password -refreshToken");
+  let newCoverImage;
+  try {
+    newCoverImage = await uploadOnCloudinary(
+      coverImageLocalPath,
+      loggedInUser.folderId,
+    );
+    if (!newCoverImage.secure_url || !newCoverImage.public_id) {
+      throw new ApiError(
+        500,
+        "Something went wrong retrieving cover image details",
+      );
+    }
+
+    if (loggedInUser.coverImage?.public_id) {
+      try {
+        await deleteFromCloudinary(loggedInUser.coverImage.public_id);
+      } catch (error) {
+        console.warn("Failed to delete old cover image from Cloudinary");
+      }
+    }
+
+    loggedInUser.coverImage = {
+      url: newCoverImage.secure_url,
+      public_id: newCoverImage.public_id,
+    };
+
+    await loggedInUser.save();
+  } catch (err) {
+    throw new ApiError(500, "Failed to update user coverImage");
+  }
 
   res
     .status(200)
-    .json(new ApiResponse(200, user, "Cover image updated successfully"));
+    .json(
+      new ApiResponse(200, loggedInUser, "Cover image updated successfully"),
+    );
 });
 //#endregion
 

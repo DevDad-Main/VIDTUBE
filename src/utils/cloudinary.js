@@ -40,12 +40,10 @@ const uploadOnCloudinary = async (localFilePath, folderId) => {
   }
 };
 
-const deleteFromCloudinary = async (publicId, userId) => {
+const deleteFromCloudinary = async (publicId) => {
   try {
-    const result = await cloudinary.uploader.destroy(publicId, {
-      folder: `VIDTUBE/${userId}`,
-    });
-    console.log(result);
+    const result = await cloudinary.uploader.destroy(publicId);
+    // console.log(result);
     console.log("Delete from cloudinary. Public ID: ", publicId);
   } catch (error) {
     console.log("Error deleting from cloudinary", error);
