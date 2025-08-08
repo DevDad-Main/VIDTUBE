@@ -81,13 +81,14 @@ router.patch(
 );
 
 // As we are only uploading a single file we define it below
-router
-  .route("/avatar")
-  .patch(verifyJWT, upload.single("avatar"), updateUserAvatar);
+router.patch("/avatar", verifyJWT, upload.single("avatar"), updateUserAvatar);
 
-router
-  .route("/cover-image")
-  .patch(verifyJWT, upload.single("coverImage"), updateUserCoverImage);
+router.patch(
+  "/cover-image",
+  verifyJWT,
+  upload.single("coverImage"),
+  updateUserCoverImage,
+);
 
 router.get("/history", verifyJWT, getWatchHistory);
 //#endregion

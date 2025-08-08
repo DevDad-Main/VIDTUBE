@@ -98,11 +98,13 @@ const registerUser = asyncHandler(async (req, res) => {
   const avatarLocalPath = req.files?.avatar?.[0]?.path;
   const coverImageLocalPath = req.files?.coverImage?.[0]?.path;
 
-  if (!avatarLocalPath) {
-    throw new ApiError(400, "Avatar file is missing.");
-  }
-  //NOTE: ALlowing the coverImage to optional
+  // NOTE: ALlowing the coverImage and avatar to default and then user can update this later in settings.
+  // NOTE: This will allow us split the users images into seperate files using their ids
   // let coverImage = "";
+
+  // if (!avatarLocalPath) {
+  //   throw new ApiError(400, "Avatar file is missing.");
+  // }
 
   // const avatar = await uploadOnCloudinary(avatarLocalPath);
   // if (coverImage) {
@@ -110,13 +112,6 @@ const registerUser = asyncHandler(async (req, res) => {
   // }
 
   let avatar;
-  try {
-    avatar = await uploadOnCloudinary(avatarLocalPath);
-    console.log("Uploaded avatar", avatar);
-  } catch (error) {
-    console.log("Error uploading avatar ", error);
-    throw new ApiError(500, "Failed to upload avatar.");
-  }
 
   let coverImage;
   try {
@@ -131,7 +126,7 @@ const registerUser = asyncHandler(async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
     const user = new User({
       fullname: fullname,
-      avatar: avatar.url,
+      avatar: avatar?.url || "",
       coverImage: coverImage?.url || "",
       email: email,
       password: hashedPassword,
@@ -152,6 +147,13 @@ const registerUser = asyncHandler(async (req, res) => {
     //#endregion
     await user.save();
 
+    try {
+      avatar = await uploadOnCloudinary(avatarLocalPath, user._id.toString());
+      console.log("Uploaded avatar", avatar);
+    } catch (error) {
+      console.log("Error uploading avatar ", error);
+      throw new ApiError(500, "Failed to upload avatar.");
+    }
     //NOTE: Returning a response to the front end
     return res
       .status(201)
@@ -451,7 +453,7 @@ const updateUserCoverImage = asyncHandler(async (req, res) => {
     throw new ApiError(500, "Something went wrong");
   }
 
-  const user = User.findByIdAndUpdate(
+  const user = await User.findByIdAndUpdate(
     req.user?._id,
     {
       $set: {

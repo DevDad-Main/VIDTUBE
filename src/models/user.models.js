@@ -49,6 +49,10 @@ const userSchema = new Schema(
       type: String, //NOTE: Won't be a plain string, it will be encrypted, maybe salting and hashing?
       required: [true, "password is required"], //NOTE: We require the password obviously but then we send over a message to front end
     },
+    folderId: {
+      type: String,
+      unique: true,
+    },
     refreshToken: {
       type: String,
     },

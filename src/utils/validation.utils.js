@@ -24,7 +24,7 @@ export const registerUserValidation = [
       }
     })
     .normalizeEmail(),
-  body("password").notEmpty().trim().isLength({ min: 5 }),
+  body("password").notEmpty().trim().isLength({ min: 6 }),
 ];
 
 export const changePasswordValidation = [
