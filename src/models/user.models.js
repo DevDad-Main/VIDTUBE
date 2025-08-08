@@ -48,6 +48,7 @@ const userSchema = new Schema(
     password: {
       type: String, //NOTE: Won't be a plain string, it wiill be encrypted, maybe salting and hashing?
       required: [true, "password is required"], //NOTE: We Requirethe password obviously but then we send over a message to front end
+      select: false, // WARN: We don't want to be able to select it when specifing user properties from the datbase
     },
     refreshToken: {
       type: String,

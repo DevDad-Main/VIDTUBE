@@ -15,6 +15,7 @@ import {
 } from "../controllers/user.controllers.js";
 import { upload } from "../middlewares/multer.middlewares.js";
 import { verifyJWT } from "../middlewares/auth.middlewares.js";
+import { registerUserValidation } from "../utils/validation.utils.js";
 
 //NOTE:   Using router modules in Express is all about:
 
@@ -35,7 +36,9 @@ const router = Router();
 //#region Unsecured routes
 //NOTE: This only means that they can be accessed by anyone.
 //NOTE: And we don't need to implement the JWT here
-router.route("/register").post(
+router.post(
+  "/register",
+  registerUserValidation,
   //NOTE: Using fields plural as we will want to get the Avatar and cover image from the user
   upload.fields([
     {
@@ -51,14 +54,14 @@ router.route("/register").post(
 );
 router.get("/all-users", getUsers);
 router.post("/login", loginUser);
-router.route("/refresh-token").post(refreshAccessToken);
+router.post("/refresh-token", refreshAccessToken);
 //#endregion
 
 //#region Secured Routes
 //NOTE: Secured routes
 //NOTE: Once we have verified with the JWT, then we call next() in our middleware which will pass over control to our logoutUser
 router.route("/logout").post(verifyJWT, logoutUser);
-router.route("/change-password").post(verifyJWT, changeUserPassword);
+router.post("/change-password", verifyJWT, changeUserPassword);
 router.route("/current-user").get(verifyJWT, getCurrentUser);
 router.route("/c/:username").get(verifyJWT, getUserChannelProfile);
 router.route("/update-account").patch(verifyJWT, updateAccountDetails);

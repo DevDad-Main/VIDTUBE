@@ -67,11 +67,11 @@ const registerUser = asyncHandler(async (req, res) => {
   //NOTE: Handy way instead of manually checking each field in a seperate if statement etc.
   //NOTE: The some will return the first one that does not meet the requiremnets, but in our case because the server is always running
   //NOTE: We will just carry on to check if the next field is missing etc
-  if (
-    [fullname, username, email, password].some((field) => field?.trim() === "")
-  ) {
-    throw new ApiError(400, "All Fields are required");
-  }
+  // if (
+  //   [fullname, username, email, password].some((field) => field?.trim() === "")
+  // ) {
+  //   throw new ApiError(400, "All Fields are required");
+  // }
 
   //NOTE: Check to see if the user already exists, we will import in the User from mongo that we made using mongoose
   //NOTE: We can find the user by multiple queries like .findOne({username or email etc})
@@ -123,7 +123,7 @@ const registerUser = asyncHandler(async (req, res) => {
   }
 
   try {
-    const user = await User.create({
+    const user = new User({
       fullname: fullname,
       avatar: avatar.url,
       coverImage: coverImage?.url || "",
@@ -322,6 +322,7 @@ const changeUserPassword = asyncHandler(async (req, res) => {
   //NOTE: Find the user and then we need to access the password and get the info from the frontend
   //NOTE: then we can get the newely requested password and update our db with that password
 
+  console.log(req.body);
   const { oldPassword, newPassword } = req.body;
 
   const user = await User.findById(req.user?._id);
@@ -332,11 +333,14 @@ const changeUserPassword = asyncHandler(async (req, res) => {
     throw new ApiError(401, "Old password is incorrect");
   }
   //NOTE: We can assign it like so.
+
   user.password = newPassword;
   //NOTE: Then we can trigger the user.save and that triggers
   //NOTE: The pre hook we have on our user model, which saves and hashes
   //NOTE: our password
-  await user.save({ validateBeforeSave: true });
+  const updatedPassword = await user.save({ validateBeforeSave: true });
+
+  console.log(updatedPassword);
 
   return res
     .status(200)
@@ -348,7 +352,13 @@ const changeUserPassword = asyncHandler(async (req, res) => {
 const getCurrentUser = asyncHandler(async (req, res) => {
   return res
     .status(200)
-    .json(new ApiResponse(200, req.user, "Current user details"));
+    .json(
+      new ApiResponse(
+        200,
+        req.user,
+        `Currently logged in user: ${req.user.username}`,
+      ),
+    );
 });
 //#endregion
 
