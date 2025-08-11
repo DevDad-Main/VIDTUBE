@@ -64,7 +64,7 @@ router.post("/refresh-token", refreshAccessToken);
 //#region Secured Routes
 //NOTE: Secured routes
 //NOTE: Once we have verified with the JWT, then we call next() in our middleware which will pass over control to our logoutUser
-router.post("/logout", verifyJWT, logoutUser);
+router.get("/logout", verifyJWT, logoutUser);
 router.post(
   "/change-password",
   verifyJWT,

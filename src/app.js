@@ -3,6 +3,7 @@ import cors from "cors";
 import healthCheckRouter from "./routes/healthCheck.routes.js";
 import cookieParser from "cookie-parser";
 import userRouter from "./routes/user.routes.js";
+import videoRouter from "./routes/video.routes.js";
 import { errorHandler } from "./middlewares/error.middlewares.js";
 import bodyParser from "body-parser";
 
@@ -47,7 +48,7 @@ app.use(cookieParser());
 //NOTE: Routes
 app.use("/api/v1/healthCheck", healthCheckRouter);
 app.use("/api/v1/users", userRouter);
-
+app.use("/api/v1/videos", videoRouter);
 app.use(errorHandler);
 
 export { app };
