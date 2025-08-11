@@ -11,6 +11,7 @@ import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import { SALT_ROUNDS } from "../constants.js";
 import bcrypt from "bcrypt";
+import mongoose from "mongoose";
 
 dotenv.config();
 
@@ -206,23 +207,23 @@ const loginUser = asyncHandler(async (req, res) => {
   // const email = req.body.email;
   // const username = req.body.username;
   // const password = req.body.password;
-  const { email, username, password } = req.body;
+  const { username, password } = req.body;
 
   ////NOTE: Validation
   //if (![email, username, password].some((field) => field?.trim() === "")) {
   //  throw new ApiError(400, "All Fields are required");
   //}
 
-  const user = await User.findOne({
-    $or: [
-      {
-        username,
-      },
-      {
-        email,
-      },
-    ],
-  });
+  const user = await User.findOne({ username: username });
+  // const user = await User.findOne({ $or: [
+  //     {
+  //       username,
+  //     },
+  // {
+  //   email,
+  // },
+  //   ],
+  // });
 
   console.log(user);
 
@@ -390,15 +391,23 @@ const changeUserPassword = asyncHandler(async (req, res) => {
 
 //#region Get Current User
 const getCurrentUser = asyncHandler(async (req, res) => {
-  return res
-    .status(200)
-    .json(
-      new ApiResponse(
-        200,
-        req.user,
-        `Currently logged in user: ${req.user.username}`,
-      ),
-    );
+  try {
+    const user = await User.findById(req.user?._id);
+    if (!user) {
+      throw new ApiError(404, "User not found");
+    }
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          user,
+          `Currently logged in user: ${req.user.username}`,
+        ),
+      );
+  } catch (err) {
+    console.log(err);
+  }
 });
 //#endregion
 
@@ -590,7 +599,7 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
       },
     },
     {
-      //NOTE: Project only the neccesasry data.
+      //NOTE: Project only the necessary data.
       $project: {
         fullname: true, //NOTE: Can also say 1 for true or 0 for false,
         username: true,
@@ -619,40 +628,43 @@ const getWatchHistory = asyncHandler(async (req, res) => {
   const user = await User.aggregate([
     {
       $match: {
-        _id: new mongoose.Types.ObjectId(req.user?._id),
+        _id: new mongoose.Types.ObjectId(`${req.user?._id}`),
       },
     },
+
     {
-      $lookup: "videos",
-      localField: "watchHistory",
-      foreignField: "_id",
-      as: "watchHistory",
-      pipeline: [
-        {
-          $lookup: {
-            from: "users",
-            localField: "owner",
-            foreignField: "_id",
-            as: "owner",
-            pipeline: [
-              {
-                $project: {
-                  fullname: 1,
-                  username: 1,
-                  avatar: 1,
+      $lookup: {
+        from: "videos",
+        localField: "watchHistory",
+        foreignField: "_id",
+        as: "watchHistory",
+        pipeline: [
+          {
+            $lookup: {
+              from: "users",
+              localField: "owner",
+              foreignField: "_id",
+              as: "owner",
+              pipeline: [
+                {
+                  $project: {
+                    fullname: 1,
+                    username: 1,
+                    avatar: 1,
+                  },
                 },
-              },
-            ],
-          },
-        },
-        {
-          $addFields: {
-            owner: {
-              $first: "$owner",
+              ],
             },
           },
-        },
-      ],
+          {
+            $addFields: {
+              owner: {
+                $first: "$owner",
+              },
+            },
+          },
+        ],
+      },
     },
   ]);
 

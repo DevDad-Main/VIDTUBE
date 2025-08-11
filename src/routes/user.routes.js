@@ -72,7 +72,7 @@ router.post(
   changeUserPassword,
 );
 router.get("/current-user", verifyJWT, getCurrentUser);
-router.get("/c/:username", verifyJWT, getUserChannelProfile);
+router.get("/channel/:username", verifyJWT, getUserChannelProfile);
 router.patch(
   "/update-account",
   verifyJWT,
@@ -90,7 +90,7 @@ router.patch(
   updateUserCoverImage,
 );
 
-router.get("/history", verifyJWT, getWatchHistory);
+router.get("/watch-history", verifyJWT, getWatchHistory);
 //#endregion
 
 export default router;
