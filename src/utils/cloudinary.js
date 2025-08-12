@@ -40,16 +40,25 @@ const uploadOnCloudinary = async (localFilePath, folderId) => {
   }
 };
 
-const uploadVideoOnCloudinary = async (localfilepath, folderid) => {
+const uploadVideoOnCloudinary = async (localFilePath, folderId) => {
   try {
-    const result = await cloudinary.uploader.upload(localfilepath, {
+    if (!localFilePath) return null;
+
+    const result = await cloudinary.uploader.upload(localFilePath, {
       resource_type: "video",
-      folder: `vidtube/${folderid}`,
+      folder: `vidtube/${folderId}`,
     });
+
+    //NOTE: Once file is uploaded, Delete it from the server
+    //NOTE: Delete the file  from our server
+    fs.unlinkSync(localFilePath);
+
     return result;
     console.log(result);
   } catch (error) {
     console.log("error uploading video", error);
+    fs.unlinkSync(localFilePath);
+    return null;
   }
 };
 
@@ -57,7 +66,7 @@ const deleteFromCloudinary = async (publicId) => {
   try {
     const result = await cloudinary.uploader.destroy(publicId);
     // console.log(result);
-    console.log("Delete from cloudinary. Public ID: ", publicId);
+    console.log("Successfully deleted from cloudinary");
   } catch (error) {
     console.log("Error deleting from cloudinary", error);
     return null;
