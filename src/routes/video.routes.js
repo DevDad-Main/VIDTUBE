@@ -2,6 +2,9 @@ import { Router } from "express";
 import {
   getAllVideos,
   publishAVideo,
+  getVideoById,
+  deleteVideo,
+  updateVideo,
 } from "../controllers/video.controllers.js";
 import { upload } from "../middlewares/multer.middlewares.js";
 import { verifyJWT } from "../middlewares/auth.middlewares.js";
@@ -28,6 +31,12 @@ router.post(
   ]),
   publishAVideo,
 );
+
 router.get("/feed", verifyJWT, getAllVideos);
+
+router.get("/:videoId", verifyJWT, getVideoById);
+router.delete("/:videoId", verifyJWT, deleteVideo);
+
+router.patch("/update-video/:videoId", verifyJWT, updateVideo);
 
 export default router;

@@ -44,6 +44,8 @@ const publishAVideo = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Video or thumbnail is missing");
   }
 
+  console.log("Video Path INFO: ", videoLocalPath);
+
   try {
     const user = await User.findById(req.user?._id);
 
@@ -68,22 +70,21 @@ const publishAVideo = asyncHandler(async (req, res) => {
       title: title || "New Video",
       description: description,
       duration: videoLocalPath?.duration || 60,
-      isPublished,
-      // isPublished: isPublished == "Yes" ? true : false,
-      owner: req.user,
+      isPublished: isPublished,
+      owner: user,
     });
 
     await newVideo.save();
     newVideo.thumbnail = thumbnail
       ? {
           url: thumbnail.secure_url,
-          public_id: thumbnail.public_id,
+          folderId: thumbnail.public_id,
         }
       : null;
     newVideo.videoFile = video
       ? {
           url: video.secure_url,
-          public_id: video.public_id,
+          folderId: video.public_id,
         }
       : null;
 
@@ -109,14 +110,14 @@ const getVideoById = asyncHandler(async (req, res) => {
   const { videoId } = req.params;
   //TODO: get video by id
 
-  const video = await Video.find({
-    _id: mongoose.Types.ObjectId(videoId),
+  const video = await Video.findById({
+    _id: new mongoose.Types.ObjectId(`${videoId}`),
   });
 
   if (!video) {
     throw new ApiError(404, "Video not found");
   }
-
+  console.log(video);
   return res.status(200).json(new ApiResponse(200, video, "Video Retrieved"));
 });
 //#endregion
