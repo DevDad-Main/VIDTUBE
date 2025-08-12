@@ -44,15 +44,15 @@ export const updateUserDetailsValidation = [
       }
     })
     .normalizeEmail(),
-  body("username")
-    .notEmpty()
-    .trim()
-    .isLength({ min: 5, max: 10 })
-    .withMessage("Username must be 5-10 characters")
-    .custom(async (value) => {
-      const user = await User.findOne({ username: value });
-      if (user) {
-        throw new Error("username already exists");
-      }
-    }),
+  // body("username")
+  //   .notEmpty()
+  //   .trim()
+  //   .isLength({ min: 5, max: 10 })
+  //   .withMessage("Username must be 5-10 characters")
+  //   .custom(async (value) => {
+  //     const user = await User.findOne({ username: value });
+  //     if (user) {
+  //       throw new Error("username already exists");
+  //     }
+  //   }),
 ];

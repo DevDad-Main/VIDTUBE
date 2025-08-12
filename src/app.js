@@ -49,6 +49,7 @@ app.use(cookieParser());
 app.use("/api/v1/healthCheck", healthCheckRouter);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/videos", videoRouter);
+
 app.use(errorHandler);
 
 export { app };

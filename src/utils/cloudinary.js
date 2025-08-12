@@ -1,7 +1,7 @@
 import { v2 as cloudinary } from "cloudinary";
 import fs from "fs";
 import dotenv from "dotenv";
-
+// import path from "path";
 dotenv.config();
 
 //NOTE: We have to import dotenv manually as cloudinary returns an error
@@ -16,7 +16,7 @@ cloudinary.config({
 const uploadOnCloudinary = async (localFilePath, folderId) => {
   try {
     if (!localFilePath) return null;
-    console.log(localFilePath);
+    // console.log(localFilePath);
 
     const response = await cloudinary.uploader.upload(localFilePath, {
       //NOTE: This is handy as it will automatically figure out the file type
@@ -40,6 +40,19 @@ const uploadOnCloudinary = async (localFilePath, folderId) => {
   }
 };
 
+const uploadVideoOnCloudinary = async (localfilepath, folderid) => {
+  try {
+    const result = await cloudinary.uploader.upload(localfilepath, {
+      resource_type: "video",
+      folder: `vidtube/${folderid}`,
+    });
+    return result;
+    console.log(result);
+  } catch (error) {
+    console.log("error uploading video", error);
+  }
+};
+
 const deleteFromCloudinary = async (publicId) => {
   try {
     const result = await cloudinary.uploader.destroy(publicId);
@@ -51,4 +64,4 @@ const deleteFromCloudinary = async (publicId) => {
   }
 };
 
-export { uploadOnCloudinary, deleteFromCloudinary };
+export { uploadOnCloudinary, uploadVideoOnCloudinary, deleteFromCloudinary };

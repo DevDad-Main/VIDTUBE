@@ -4,7 +4,10 @@ import { User } from "../models/user.models.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
-import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import {
+  uploadOnCloudinary,
+  uploadVideoOnCloudinary,
+} from "../utils/cloudinary.js";
 
 //#region Get All Videos
 const getAllVideos = asyncHandler(async (req, res) => {
@@ -23,45 +26,70 @@ const getAllVideos = asyncHandler(async (req, res) => {
   } catch (error) {
     throw new ApiError(500, "Failed to fetch videos", error);
   }
-  console.log(videos);
+  // console.log(videos);
 });
 //#endregion
 
 //#region Publish a Video
 const publishAVideo = asyncHandler(async (req, res) => {
-  const { title, description } = req.body;
+  const { title, description, isPublished } = req.body;
   // TODO: get video, upload to cloudinary, create video
 
-  const thumbnailLocalPath = req.files?.thumbail?.[0]?.path;
-  let newThumbnail;
+  console.log(req.body);
+
+  const videoLocalPath = req.files?.video[0]?.path;
+  const thumbnailLocalPath = req.files?.thumbnail[0]?.path;
+
+  if (!videoLocalPath || !thumbnailLocalPath) {
+    throw new ApiError(400, "Video or thumbnail is missing");
+  }
+
   try {
+    const user = await User.findById(req.user?._id);
+
+    const thumbnail = await uploadOnCloudinary(
+      thumbnailLocalPath,
+      user?.folderId,
+    );
+    const video = await uploadVideoOnCloudinary(videoLocalPath, user?.folderId);
+
+    if (!video || !thumbnail) {
+      throw new ApiError(401, "Something went wrong uploading to the cloud");
+    }
     const newVideo = new Video({
-      // thumbnail: thumbnail,
-      title: title,
+      // videoFile: {
+      //   url: video.secure_url,
+      //   public_id: video.public_id,
+      // },
+      // thumbnail: {
+      //   url: thumbnail.secure_url,
+      //   public_id: thumbnail.public_id,
+      // },
+      title: title || "New Video",
       description: description,
-      isPublished: true,
+      duration: videoLocalPath?.duration || 60,
+      isPublished,
+      // isPublished: isPublished == "Yes" ? true : false,
       owner: req.user,
     });
 
-    try {
-      newThumbnail = await uploadOnCloudinary(
-        thumbnailLocalPath,
-        req.user?.folderId,
-      );
-      console.log("Uploaded video thumnail", newThumbnail);
-    } catch (error) {
-      console.log("Error uploading thumbnail", error);
-      throw new ApiError(500, "Failed to upload thumbnail.");
-    }
-
-    newVideo.thumbnail = newThumbnail
+    await newVideo.save();
+    newVideo.thumbnail = thumbnail
       ? {
-          url: newThumbnail.secure_url,
-          public_id: newThumbnail.public_id,
+          url: thumbnail.secure_url,
+          public_id: thumbnail.public_id,
+        }
+      : null;
+    newVideo.videoFile = video
+      ? {
+          url: video.secure_url,
+          public_id: video.public_id,
         }
       : null;
 
     await newVideo.save();
+
+    // const createdVideo = await Video.findById(newVideo._id);
 
     res.status(200).json(new ApiResponse(200, newVideo, "Video Published"));
   } catch (error) {
@@ -70,7 +98,7 @@ const publishAVideo = asyncHandler(async (req, res) => {
     throw new ApiError(
       500,
       "Something went wrong while publishing video",
-      error,
+      error.body,
     );
   }
 });

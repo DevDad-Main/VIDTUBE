@@ -396,6 +396,7 @@ const getCurrentUser = asyncHandler(async (req, res) => {
     if (!user) {
       throw new ApiError(404, "User not found");
     }
+    console.log(user);
     return res
       .status(200)
       .json(
@@ -415,8 +416,9 @@ const getCurrentUser = asyncHandler(async (req, res) => {
 //NOTE: We don't have to allow updating everything, maybe specific things like, email, username etc
 const updateAccountDetails = asyncHandler(async (req, res) => {
   const errors = validationResult(req);
-  const { fullname, username, email } = req.body;
+  const { fullname, email } = req.body;
 
+  console.log(req.body);
   if (!errors.isEmpty()) {
     throw new ApiError(400, "Error validating user input", errors.array());
   }
@@ -426,7 +428,6 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
     {
       $set: {
         fullname: fullname,
-        username: username,
         email: email,
       },
     },
