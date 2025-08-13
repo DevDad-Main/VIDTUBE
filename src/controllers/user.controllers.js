@@ -581,6 +581,14 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
       },
     },
     {
+      $lookup: {
+        from: "videos", // Collection name you're joining FROM
+        localField: "_id", // Field in the *current* collection
+        foreignField: "owner", // Field in the 'from' collection
+        as: "videos", // Name of the new array field to store matches
+      },
+    },
+    {
       $addFields: {
         subscribersCount: {
           $size: "$subscribers",
@@ -610,6 +618,7 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
         isSubscribed: true,
         coverImage: true,
         email: true,
+        videos: true,
       },
     },
   ]);
