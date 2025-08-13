@@ -5,6 +5,7 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { Video } from "../models/video.models.js";
 
+//#region Toggle A Video Like
 const toggleVideoLike = asyncHandler(async (req, res) => {
   const { videoId } = req.params;
   if (!isValidObjectId(videoId)) {
@@ -66,12 +67,16 @@ const toggleVideoLike = asyncHandler(async (req, res) => {
     throw new ApiError(500, "Error liking video", error);
   }
 });
+//#endregion
 
+//#region Toggle A Comment Like
 const toggleCommentLike = asyncHandler(async (req, res) => {
   const { commentId } = req.params;
   //TODO: toggle like on comment
 });
+//#endregion
 
+//#region Get All Liked Videos
 const getLikedVideos = asyncHandler(async (req, res) => {
   try {
     const videos = await Video.find();
@@ -100,5 +105,6 @@ const getLikedVideos = asyncHandler(async (req, res) => {
     throw new ApiError(500, "Error fetching video", error);
   }
 });
+//#endregion
 
 export { toggleCommentLike, toggleVideoLike, getLikedVideos };
