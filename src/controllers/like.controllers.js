@@ -73,31 +73,27 @@ const toggleCommentLike = asyncHandler(async (req, res) => {
 });
 
 const getLikedVideos = asyncHandler(async (req, res) => {
-  //TODO: get all liked videos
-  const { videoId } = req.params;
-
-  if (!isValidObjectId(videoId)) {
-    throw new ApiError(400, "Invalid video id");
-  }
-
   try {
-    // Find the video by ID
-    const video = await Video.findById(videoId);
-    if (!video) {
-      throw new ApiError(404, "Video not found");
-    }
+    const videos = await Video.find();
 
-    // Count likes for this video
-    const likeCount = await Like.countDocuments({ video: video._id });
+    // For each video, count the likes
+    const videosWithLikes = await Promise.all(
+      videos.map(async (video) => {
+        const likeCount = await Like.countDocuments({ video: video._id });
+        return {
+          ...video.toObject(), //NOTE: convert mongoose doc to plain JS object
+          likes: likeCount,
+        };
+      }),
+    );
 
-    // Return the video with like count
     return res
       .status(200)
       .json(
         new ApiResponse(
           200,
-          { ...video.toObject(), likes: likeCount },
-          "Video fetched successfully",
+          videosWithLikes,
+          "All videos fetched successfully",
         ),
       );
   } catch (error) {
