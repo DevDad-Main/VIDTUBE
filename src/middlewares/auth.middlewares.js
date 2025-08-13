@@ -6,6 +6,7 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
+//#region Verify JWT
 //NOTE: Leaving response as empty since we are not sending anything
 //NOTE: Using next as we want to transfer the flow onto the next controller.
 //NOTE: Next is important to execute what we want to do next
@@ -41,3 +42,4 @@ export const verifyJWT = asyncHandler(async (req, _, next) => {
     throw new ApiError(401, error?.message || "Invalid access token");
   }
 });
+//#endregion

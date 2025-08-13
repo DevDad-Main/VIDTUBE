@@ -110,15 +110,25 @@ const getVideoById = asyncHandler(async (req, res) => {
   const { videoId } = req.params;
   //TODO: get video by id
 
-  const video = await Video.findById({
-    _id: new mongoose.Types.ObjectId(`${videoId}`),
-  });
+  try {
+    const user = await User.findById(req.user?._id);
+    const video = await Video.findById({ _id: videoId });
 
-  if (!video) {
-    throw new ApiError(404, "Video not found");
+    const isOwner =
+      video.owner.toString() === user._id.toString() ? true : false;
+
+    console.log(isOwner);
+
+    if (!video) {
+      throw new ApiError(404, "Video not found");
+    }
+    console.log(video);
+    return res
+      .status(200)
+      .json(new ApiResponse(200, { ...video, isOwner }, "Video Retrieved"));
+  } catch (error) {
+    throw new ApiError(500, "Error fetching video", error);
   }
-  console.log(video);
-  return res.status(200).json(new ApiResponse(200, video, "Video Retrieved"));
 });
 //#endregion
 
@@ -150,7 +160,15 @@ const updateVideo = asyncHandler(async (req, res) => {
 //#region Delete Video
 const deleteVideo = asyncHandler(async (req, res) => {
   const { videoId } = req.params;
-  //TODO: delete video
+
+  try {
+    const videoToDelete = await Video.findByIdAndDelete({ _id: videoId });
+
+    //Send empty data but optionally could send back the video to delete if the front end wants to display some info etc, or maybe add to extra database for deletd videos etc
+    return res.status(200).json(new ApiResponse(200, {}, "Video deleted"));
+  } catch (error) {
+    throw new ApiError(500, "Error deleting video", error);
+  }
 });
 //#endregion
 
