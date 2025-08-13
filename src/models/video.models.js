@@ -20,8 +20,6 @@ const videoSchema = new Schema(
       folderId: {
         type: String,
       },
-      // type: String, // Cloudinary URL
-      // required: true,
     },
     title: {
       type: String,
@@ -46,6 +44,10 @@ const videoSchema = new Schema(
     owner: {
       type: Schema.Types.ObjectId,
       ref: "User",
+    },
+    likes: {
+      type: Number,
+      default: 0,
     },
   },
   //NOTE: This property tells mongoose to assign createdAt nd updatedAt field to your scheme, type will be Date

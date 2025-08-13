@@ -59,6 +59,8 @@ const publishAVideo = asyncHandler(async (req, res) => {
     );
     const video = await uploadVideoOnCloudinary(videoLocalPath, user?.folderId);
 
+    console.log("VIDEO", video);
+
     if (!video || !thumbnail) {
       throw new ApiError(401, "Something went wrong uploading to the cloud");
     }
@@ -73,7 +75,7 @@ const publishAVideo = asyncHandler(async (req, res) => {
       // },
       title: title || "New Video",
       description: description,
-      duration: videoLocalPath?.duration || 60,
+      duration: video.duration || 60,
       isPublished: isPublished,
       owner: user,
     });

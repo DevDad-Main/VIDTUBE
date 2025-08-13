@@ -6,6 +6,7 @@ import userRouter from "./routes/user.routes.js";
 import videoRouter from "./routes/video.routes.js";
 import { errorHandler } from "./middlewares/error.middlewares.js";
 import bodyParser from "body-parser";
+import likeRouter from "./routes/like.routes.js";
 
 const app = express();
 
@@ -49,6 +50,7 @@ app.use(cookieParser());
 app.use("/api/v1/healthCheck", healthCheckRouter);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/videos", videoRouter);
+app.use("/api/v1/likes", likeRouter);
 
 app.use(errorHandler);
 
