@@ -1,4 +1,3 @@
-import mongoose, { isValidObjectId } from "mongoose";
 import { Video } from "../models/video.models.js";
 import { User } from "../models/user.models.js";
 import { ApiError } from "../utils/ApiError.js";
@@ -11,17 +10,22 @@ import {
 
 //#region Get All Videos
 const getAllVideos = asyncHandler(async (req, res) => {
-  const { page = 1, limit = 10, query, sortBy, sortType, userId } = req.query;
+  const { page, limit, query, sortBy, sortType, userId } = req.query;
   //TODO: get all videos based on query, sort, pagination
   try {
+    const pageNum = parseInt(page) || 1;
+    const limitNum = parseInt(limit) || 10;
+
     const videos = await Video.find()
-      .skip((page - 1) * limit)
-      .limit(10);
+      .populate("owner", "-password, -email")
+      .skip((pageNum - 1) * limitNum)
+      .limit(limitNum);
 
     if (!videos) {
       throw new ApiError(404, "No videos found");
     }
 
+    console.log("VIDEOS", videos);
     res.status(200).json(new ApiResponse(200, videos, "Videos fetched"));
   } catch (error) {
     throw new ApiError(500, "Failed to fetch videos", error);
@@ -111,18 +115,20 @@ const getVideoById = asyncHandler(async (req, res) => {
   //TODO: get video by id
 
   try {
-    const user = await User.findById(req.user?._id);
-    const video = await Video.findById({ _id: videoId });
+    const videoOwner = await User.findById(req.user?._id);
 
-    const isOwner =
-      video.owner.toString() === user._id.toString() ? true : false;
-
-    console.log(isOwner);
+    const video = await Video.findById({ _id: videoId }).populate(
+      "owner",
+      "-password -email",
+    );
 
     if (!video) {
       throw new ApiError(404, "Video not found");
     }
-    console.log(video);
+
+    const isOwner =
+      video.owner._id.toString() === videoOwner._id.toString() ? true : false;
+
     return res
       .status(200)
       .json(new ApiResponse(200, { ...video, isOwner }, "Video Retrieved"));
