@@ -16,7 +16,8 @@ const toggleVideoLike = asyncHandler(async (req, res) => {
       likedBy: req.user?._id,
     });
 
-    const video = await Video.findById({ _id: videoId });
+    //NOTE: Using this DB call as then we only have to call it once, i dont like it because the syntax below looks ugly in our if block, but least we dont have to call more than once
+    const video = await Video.findById(videoId);
     if (!video) {
       throw new ApiError(404, "Video not found");
     }
@@ -71,13 +72,37 @@ const toggleCommentLike = asyncHandler(async (req, res) => {
   //TODO: toggle like on comment
 });
 
-const toggleTweetLike = asyncHandler(async (req, res) => {
-  const { tweetId } = req.params;
-  //TODO: toggle like on tweet
-});
-
 const getLikedVideos = asyncHandler(async (req, res) => {
   //TODO: get all liked videos
+  const { videoId } = req.params;
+
+  if (!isValidObjectId(videoId)) {
+    throw new ApiError(400, "Invalid video id");
+  }
+
+  try {
+    // Find the video by ID
+    const video = await Video.findById(videoId);
+    if (!video) {
+      throw new ApiError(404, "Video not found");
+    }
+
+    // Count likes for this video
+    const likeCount = await Like.countDocuments({ video: video._id });
+
+    // Return the video with like count
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          { ...video.toObject(), likes: likeCount },
+          "Video fetched successfully",
+        ),
+      );
+  } catch (error) {
+    throw new ApiError(500, "Error fetching video", error);
+  }
 });
 
-export { toggleCommentLike, toggleTweetLike, toggleVideoLike, getLikedVideos };
+export { toggleCommentLike, toggleVideoLike, getLikedVideos };
