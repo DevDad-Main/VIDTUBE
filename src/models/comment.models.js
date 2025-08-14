@@ -15,10 +15,11 @@ const commentSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "User",
     },
-    // isOwner: {
-    //   type: Boolean,
-    //   default: true,
-    // },
+    //NOTE: Only really adding this field for the frontend so we can display extra buttons for deleting and updating commetns
+    isOwner: {
+      type: Boolean,
+      default: true,
+    },
   },
   { timestamps: true },
 );

@@ -83,6 +83,24 @@ const updateComment = asyncHandler(async (req, res) => {
 
 const deleteComment = asyncHandler(async (req, res) => {
   // TODO: delete a comment
+  const { id } = req.params;
+
+  if (!isValidObjectId(id)) {
+    throw new ApiError(400, "Invalid comment id");
+  }
+
+  try {
+    const commentToDelete = await Comment.findByIdAndDelete(id);
+
+    if (!commentToDelete) {
+      throw new ApiError(404, "Comment not found");
+    }
+
+    res.status(200).json(new ApiResponse(200, {}, "Comment deleted"));
+    console.log(commentToDelete);
+  } catch (error) {
+    throw new ApiError(500, "Error deleting comment", error);
+  }
 });
 
 export { getVideoComments, addComment, updateComment, deleteComment };
