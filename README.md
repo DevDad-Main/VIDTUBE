@@ -98,19 +98,6 @@ npm run dev
 
 ---
 
-🧑‍💻 Author
-
-Olly – Aspiring Junior Backend Developer
-📧 [softwaredevdad@gmail.com]
-
----
-
-📃 License
-
-This project is open-source and available under the MIT License.
-
----
-
 6 Example API Endpoints
 
 | Method | Endpoint                       | Description                 |
