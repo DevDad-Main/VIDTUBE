@@ -25,10 +25,8 @@ const getVideoComments = asyncHandler(async (req, res) => {
       .lean(); //NOTE: Returns a plan JS objects so we can modify them easily
 
     if (!comments) {
-      throw new ApiError(404, "Videos not found");
+      throw new ApiError(404, "Comments not found");
     }
-
-    // console.log(comments);
 
     const userId = req.user?._id.toString();
     const commentsWithOwnerProperty = comments.map((comment) => ({
