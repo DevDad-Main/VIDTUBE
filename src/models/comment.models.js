@@ -15,6 +15,10 @@ const commentSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "User",
     },
+    // isOwner: {
+    //   type: Boolean,
+    //   default: true,
+    // },
   },
   { timestamps: true },
 );
