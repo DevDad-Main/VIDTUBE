@@ -71,8 +71,57 @@ const toggleVideoLike = asyncHandler(async (req, res) => {
 
 //#region Toggle A Comment Like
 const toggleCommentLike = asyncHandler(async (req, res) => {
-  const { commentId } = req.params;
+  const { id } = req.params;
   //TODO: toggle like on comment
+
+  if (!isValidObjectId(id)) {
+    throw new ApiError(400, "Invalid comment id");
+  }
+
+  try {
+    const existingLike = await Like.findOne({
+      comment: id,
+      likedBy: req.user?._id,
+    });
+
+    if (existingLike) {
+      // Unlike
+      await Like.findByIdAndDelete(existingLike._id);
+
+      const totalLike = await Like.find({
+        comment: id,
+      });
+      return res
+        .status(200)
+        .json(
+          new ApiResponse(
+            200,
+            { likes: totalLike.length, isLiked: false },
+            "Comment unliked Successfully",
+          ),
+        );
+    } else {
+      await Like.create({
+        comment: id,
+        likedBy: req.user?._id,
+      });
+
+      const totalLike = await Like.find({
+        comment: id,
+      });
+      return res
+        .status(200)
+        .json(
+          new ApiResponse(
+            200,
+            { likes: totalLike.length, isLiked: true },
+            "Comment liked",
+          ),
+        );
+    }
+  } catch (error) {
+    throw new ApiError(500, "Error liking comment", error);
+  }
 });
 //#endregion
 
@@ -106,5 +155,43 @@ const getLikedVideos = asyncHandler(async (req, res) => {
   }
 });
 //#endregion
+
+const getCommentsWithLikes = asyncHandler(async (req, res) => {
+  const { videoId } = req.params;
+
+  try {
+    const comments = await Comment.aggregate([
+      { $match: { video: new mongoose.Types.ObjectId(`${videoId}`) } },
+      {
+        $lookup: {
+          from: "likes",
+          let: { commentId: "$_id" },
+          pipeline: [
+            { $match: { $expr: { $eq: ["$comment", "$$commentId"] } } },
+          ],
+          as: "likes",
+        },
+      },
+      {
+        $addFields: {
+          likesCount: { $size: "$likes" },
+          isLiked: {
+            $in: [
+              new mongoose.Types.ObjectId(`${req.user?._id}`),
+              "$likes.likedBy",
+            ],
+          },
+        },
+      },
+      { $unset: "likes" },
+    ]);
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, comments, "Comments fetched"));
+  } catch (error) {
+    throw new ApiError(500, "Error fetching comments", error);
+  }
+});
 
 export { toggleCommentLike, toggleVideoLike, getLikedVideos };
