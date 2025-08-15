@@ -21,7 +21,6 @@ _A lightweight YouTube-style backend API built with Node.js, Express, and MongoD
 - **Node.js** & **Express.js** - Web server and routing
 - **MongoDB** & **Mongoose** - NoSQL database and ODM
 - **Multer** - File uploads (avatars, profile pictures) to Cloudinary
-- **Winston** & **Morgan** - Logging and error tracking
 - **Postman** - API testing and documentation
 
 ---
@@ -79,7 +78,7 @@ ACCESS_TOKEN_EXPIRY="1hr"
 REFRESH_TOKEN_SECRET=
 REFRESH_TOKEN_EXPIRY="1hr"
 
-CORS_ORIGIN=["http://localhost:3000","http://localhost:3001"]
+CORS_ORIGIN="http://localhost:5173"
 
 NODE_ENV="development"
 
@@ -94,7 +93,7 @@ CLOUDINARY_API_SECRET=
 npm run dev
 ```
 
-> The API will be live at `http://localhost:3000`
+> The API will be live at `http://localhost:5173` -> Ready for the Frontend
 
 ---
 
@@ -124,17 +123,9 @@ npm run dev
 
 ---
 
-## 📌 Future Features (Planned)
-
-- [ ] Comments & likes system
-- [ ] Subscriptions
-- [ ] Admin panel & moderation tools
-
----
-
 ## 🧑‍💻 Author
 
-**Olly** - _Backend Developer_  
+**Olly** - Aspiring _Backend Developer_  
 📨 [softwaredevdad@gmail.com]
 
 ---
