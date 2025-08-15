@@ -4,7 +4,6 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { Video } from "../models/video.models.js";
-import { Like } from "../models/like.models.js";
 
 //#region Get Video Comments
 const getVideoComments = asyncHandler(async (req, res) => {
