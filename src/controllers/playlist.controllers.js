@@ -115,10 +115,28 @@ const addVideoToPlaylist = asyncHandler(async (req, res) => {
 });
 //#endregion
 
+//#region Remove Video From Playlist
 const removeVideoFromPlaylist = asyncHandler(async (req, res) => {
-  const { playlistId, videoId } = req.params;
-  // TODO: remove video from playlist
+  const { playlistId } = req.params;
+  const { videoId } = req.body;
+
+  if (!isValidObjectId(videoId) || !isValidObjectId(playlistId)) {
+    throw new ApiError(400, "Invalid video or playlist id");
+  }
+
+  try {
+    const playlist = await Playlist.findById(playlistId);
+    const video = await Video.findById(videoId);
+
+    playlist.videos.pull(video);
+    await playlist.save();
+
+    res.status(200).json(new ApiResponse(200, playlist, "Video removed"));
+  } catch (error) {
+    throw new ApiError(500, "Error removing video from playlist", error);
+  }
 });
+//#endregion
 
 //#region Delete Playlist
 const deletePlaylist = asyncHandler(async (req, res) => {

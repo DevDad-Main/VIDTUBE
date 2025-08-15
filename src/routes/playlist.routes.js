@@ -5,6 +5,7 @@ import {
   getPlaylistById,
   deletePlaylist,
   updatePlaylist,
+  removeVideoFromPlaylist,
 } from "../controllers/playlist.controllers.js";
 import { Router } from "express";
 import { verifyJWT } from "../middlewares/auth.middlewares.js";
@@ -17,5 +18,6 @@ router.post("/playlist", verifyJWT, addVideoToPlaylist);
 router.get("/p/:id", verifyJWT, getPlaylistById);
 router.delete("/delete/:playlistId", verifyJWT, deletePlaylist);
 router.patch("/update/:playlistId", verifyJWT, updatePlaylist);
+router.delete("/remove-video/:playlistId", verifyJWT, removeVideoFromPlaylist);
 
 export default router;
