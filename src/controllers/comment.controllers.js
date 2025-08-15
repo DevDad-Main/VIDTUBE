@@ -4,46 +4,52 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { Video } from "../models/video.models.js";
-import { User } from "../models/user.models.js";
+import { Like } from "../models/like.models.js";
 
 const getVideoComments = asyncHandler(async (req, res) => {
-  //TODO: get all comments for a video
   const { videoId } = req.params;
   const { page, limit } = req.query;
 
   if (!isValidObjectId(videoId)) {
     throw new ApiError(400, "Invalid video id");
   }
-  try {
-    const pageNum = parseInt(page) || 1;
-    const limitNum = parseInt(limit) || 10;
 
-    const comments = await Comment.find({ video: videoId })
-      .populate("owner", "-password -email")
-      .skip((pageNum - 1) * limitNum)
-      .limit(limitNum)
-      .lean(); //NOTE: Returns a plan JS objects so we can modify them easily
+  const pageNum = parseInt(page) || 1;
+  const limitNum = parseInt(limit) || 10;
 
-    if (!comments) {
-      throw new ApiError(404, "Comments not found");
-    }
+  const comments = await Comment.find({ video: videoId })
+    .populate("owner", "-password -email")
+    .skip((pageNum - 1) * limitNum)
+    .limit(limitNum)
+    .lean();
 
-    const userId = req.user?._id.toString();
-    const commentsWithOwnerProperty = comments.map((comment) => ({
-      ...comment,
-      isOwner: comment.owner._id.toString() === userId,
-    }));
-
-    res
-      .status(200)
-      .json(
-        new ApiResponse(200, commentsWithOwnerProperty, "Comments fetched"),
-      );
-  } catch (error) {
-    throw new ApiError(500, "Error fetching comments", error);
+  if (!comments) {
+    throw new ApiError(404, "Comments not found");
   }
-});
 
+  const userId = req.user?._id?.toString();
+
+  // Add likes count and isLiked
+  const commentsWithLikes = await Promise.all(
+    comments.map(async (comment) => {
+      const likesCount = await Like.countDocuments({ comment: comment._id });
+      const isLiked = userId
+        ? await Like.exists({ comment: comment._id, likedBy: userId })
+        : false;
+
+      return {
+        ...comment,
+        isOwner: comment.owner._id.toString() === userId,
+        likes: likesCount,
+        isLiked: Boolean(isLiked),
+      };
+    }),
+  );
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, commentsWithLikes, "Comments fetched"));
+});
 const addComment = asyncHandler(async (req, res) => {
   // TODO: add a comment to a video
   const { videoId } = req.params;

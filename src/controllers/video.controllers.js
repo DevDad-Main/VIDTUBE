@@ -128,6 +128,13 @@ const getVideoById = asyncHandler(async (req, res) => {
       throw new ApiError(404, "Video not found");
     }
 
+    console.log("Video views before: ", video?.views);
+
+    //Add a view to the video, we later can implement a similiar mechanic to youtube where the user can only add a view every 3-5min of leaving and revisiting the video
+    video.views += 1;
+    await video.save();
+
+    console.log("Video views after: ", video?.views);
     const isOwner =
       video.owner._id.toString() === videoOwner._id.toString() ? true : false;
 
