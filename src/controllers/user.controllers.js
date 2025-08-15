@@ -2,6 +2,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { validationResult } from "express-validator";
 import { ApiError } from "../utils/ApiError.js";
 import { User } from "../models/user.models.js";
+import { Playlist } from "../models/playlist.models.js";
 import {
   deleteFromCloudinary,
   uploadOnCloudinary,
@@ -124,6 +125,12 @@ const registerUser = asyncHandler(async (req, res) => {
       username: username.toLowerCase(),
     });
 
+    //NOTE: Adding a default playlist to each newely created user
+    await Playlist.create({
+      name: "Watch Later",
+      description: "Videos you want to watch later",
+      owner: user._id,
+    });
     //#region Old Query for checking if user exists
     //NOTE: Extra query from the DB to make sure we are not maing a duplicate
     //NOTE: Also .select()we are specifing the data we dont want to be returned
