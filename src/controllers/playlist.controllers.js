@@ -135,7 +135,7 @@ const deletePlaylist = asyncHandler(async (req, res) => {
       throw new ApiError(404, "Playlist not found");
     }
 
-    res.status(200).json(new ApiResponse(200, {}, "Playlist deleted"));
+    return res.status(200).json(new ApiResponse(200, {}, "Playlist deleted"));
   } catch (error) {
     throw new ApiError(500, "Error deleting playlist", error);
   }
@@ -147,7 +147,24 @@ const updatePlaylist = asyncHandler(async (req, res) => {
   const { playlistId } = req.params;
   const { name, description } = req.body;
   //TODO: update playlist
+  if (!isValidObjectId(playlistId)) {
+    throw new ApiError(400, "Invalid playlist id");
+  }
+
+  try {
+    const playlist = await Playlist.findById(playlistId);
+
+    playlist.name = name;
+    playlist.description = description;
+
+    await playlist.save();
+
+    return res.status(200).json(new ApiResponse(200, playlist, "Updated"));
+  } catch (error) {
+    throw new ApiError(500, "Error updating playlist", error);
+  }
 });
+//#endregion
 
 export {
   createPlaylist,
