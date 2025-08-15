@@ -1,8 +1,9 @@
 import mongoose, { isValidObjectId } from "mongoose";
-import { Playlist } from "../models/playlist.model.js";
+import { Playlist } from "../models/playlist.models.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
+import { User } from "../models/user.models.js";
 
 const createPlaylist = asyncHandler(async (req, res) => {
   const { name, description } = req.body;
@@ -11,7 +12,23 @@ const createPlaylist = asyncHandler(async (req, res) => {
 });
 
 const getUserPlaylists = asyncHandler(async (req, res) => {
-  const { userId } = req.params;
+  // const { userId } = req.params;
+  //
+  // if (!isValidObjectId(userId)) {
+  //   throw new ApiError(400, "Invalid user id");
+  // }
+
+  try {
+    const loggedInUser = await User.findById(req.user?._id);
+    if (!loggedInUser) {
+      throw new ApiError(404, "User not found");
+    }
+
+    res.status(200).json(new ApiResponse(200, loggedInUser.watchHistory));
+  } catch (error) {
+    throw new ApiError(500, "Error getting user", error);
+  }
+
   //TODO: get user playlists
 });
 

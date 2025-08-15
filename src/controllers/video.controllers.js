@@ -117,7 +117,7 @@ const getVideoById = asyncHandler(async (req, res) => {
   //TODO: get video by id
 
   try {
-    const videoOwner = await User.findById(req.user?._id);
+    const loggedInUser = await User.findById(req.user?._id);
 
     const video = await Video.findById({ _id: videoId }).populate(
       "owner",
@@ -136,7 +136,13 @@ const getVideoById = asyncHandler(async (req, res) => {
 
     console.log("Video views after: ", video?.views);
     const isOwner =
-      video.owner._id.toString() === videoOwner._id.toString() ? true : false;
+      video.owner._id.toString() === loggedInUser._id.toString() ? true : false;
+
+    if (!isOwner) {
+      loggedInUser.watchHistory.push(video._id);
+      await loggedInUser.save();
+      console.log(loggedInUser.watchHistory);
+    }
 
     return res
       .status(200)

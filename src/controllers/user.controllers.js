@@ -635,6 +635,12 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
 
 //#region Get Watch History
 const getWatchHistory = asyncHandler(async (req, res) => {
+  // const user = await User.findById(req.user?._id).populate(
+  //   "watchHistory",
+  //   "-password -email",
+  // );
+
+  //#region User Aggregation
   const user = await User.aggregate([
     {
       $match: {
@@ -677,6 +683,7 @@ const getWatchHistory = asyncHandler(async (req, res) => {
       },
     },
   ]);
+  //#endregion
 
   if (!user) {
     throw new ApiError(400, "User Not Found");
@@ -687,7 +694,7 @@ const getWatchHistory = asyncHandler(async (req, res) => {
     .json(
       new ApiResponse(
         200,
-        user[0]?.watchHistory,
+        user[0].watchHistory,
         "Watch history fetched successfully",
       ),
     );
