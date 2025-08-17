@@ -616,8 +616,9 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
     },
     {
       //NOTE: Project only the necessary data.
+      //NOTE: Can also say 1 for true or 0 for false,
       $project: {
-        // fullname: true, //NOTE: Can also say 1 for true or 0 for false,
+        // fullname: true,
         username: true,
         avatar: true,
         subscribersCount: true,
