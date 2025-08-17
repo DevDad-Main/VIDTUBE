@@ -212,7 +212,9 @@ const getVideosBySearch = asyncHandler(async (req, res) => {
 
     const videos = await Video.find({
       title: { $regex: safeQuery, $options: "i" }, // case-insensitive search
-    }).limit(10);
+    })
+      .limit(10)
+      .populate("owner", "-password -email");
 
     return res.status(200).json(new ApiResponse(200, videos, "Videos Fetched"));
   } catch (err) {
