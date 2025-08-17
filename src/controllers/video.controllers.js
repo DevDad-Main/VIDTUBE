@@ -7,6 +7,7 @@ import {
   uploadOnCloudinary,
   uploadVideoOnCloudinary,
 } from "../utils/cloudinary.js";
+import { escapeRegex } from "../utils/validation.utils.js";
 
 //#region Get All Videos
 const getAllVideos = asyncHandler(async (req, res) => {
@@ -199,6 +200,27 @@ const togglePublishStatus = asyncHandler(async (req, res) => {
 });
 //#endregion
 
+//#region Get Videos By Search
+const getVideosBySearch = asyncHandler(async (req, res) => {
+  const { query } = req.query;
+
+  try {
+    const safeQuery = escapeRegex(query);
+    if (!safeQuery) {
+      throw new ApiError(400, "Query required");
+    }
+
+    const videos = await Video.find({
+      title: { $regex: safeQuery, $options: "i" }, // case-insensitive search
+    }).limit(10);
+
+    return res.status(200).json(new ApiResponse(200, videos, "Videos Fetched"));
+  } catch (err) {
+    throw new ApiError(500, "Error getting videos", err);
+  }
+});
+//#endregion
+
 export {
   getAllVideos,
   publishAVideo,
@@ -206,4 +228,5 @@ export {
   updateVideo,
   deleteVideo,
   togglePublishStatus,
+  getVideosBySearch,
 };
