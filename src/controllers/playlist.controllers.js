@@ -17,6 +17,12 @@ const createPlaylist = asyncHandler(async (req, res) => {
       throw new ApiError(404, "User not found");
     }
 
+    const exisitingPlaylist = await Playlist.findOne({ name: name });
+
+    if (exisitingPlaylist) {
+      throw new ApiError(400, "Playlist with that name already exists");
+    }
+
     const newPlaylist = new Playlist({
       name,
       description,
@@ -25,7 +31,6 @@ const createPlaylist = asyncHandler(async (req, res) => {
 
     await newPlaylist.save();
 
-    console.log(newPlaylist);
     return res.status(201).json(new ApiResponse(201, newPlaylist, "Created"));
   } catch (error) {
     throw new ApiError(500, "Error creating playlist", error);
