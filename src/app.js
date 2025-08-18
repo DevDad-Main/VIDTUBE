@@ -17,9 +17,20 @@ const app = express();
 //NOTE: CORS is a security feature built into web browsers
 //NOTE: that controls which websites are allowed to make requests to your backend server (API).
 
+//NOTE: We have to split the string from .env as it dosent get interpreted as an array of origins
+const allowedOrigins = process.env.CORS_ORIGIN.split(","); // split comma-separated string
+
 app.use(
   cors({
-    origin: process.env.CORS_ORIGIN,
+    origin: function (origin, callback) {
+      // allow requests with no origin like mobile apps or curl
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     methods: ["PATCH", "POST", "PUT", "GET", "DELETE", "OPTIONS"],
     allowedHeaders: [
       "Content-Type",

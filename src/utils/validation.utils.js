@@ -1,7 +1,7 @@
 import { body, check } from "express-validator";
 import { User } from "../models/user.models.js";
 import bcrypt from "bcrypt";
-const SALT_ROUNDS = 12;
+import { SALT_ROUNDS } from "../constants.js";
 
 export const registerUserValidation = [
   body("fullname").not().isEmpty().trim(),
