@@ -25,6 +25,14 @@ _A lightweight YouTube-style backend API built with Node.js, Express, and MongoD
 
 ---
 
+
+https://github.com/user-attachments/assets/fcad586c-6924-46a8-b212-2afe662e1f96
+
+
+
+https://github.com/user-attachments/assets/7c0b4165-267d-49de-9f1f-178975ef4e75
+
+
 <details>
 
 <summary>🌟 User Routes</summary>
