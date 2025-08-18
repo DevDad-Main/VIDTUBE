@@ -399,17 +399,101 @@ const changeUserPassword = asyncHandler(async (req, res) => {
 //#region Get Current User
 const getCurrentUser = asyncHandler(async (req, res) => {
   try {
-    const user = await User.findById(req.user?._id);
+    const user = await User.findById(req.user?._id).lean();
     if (!user) {
       throw new ApiError(404, "User not found");
     }
-    console.log(user);
+    const channel = await User.aggregate([
+      {
+        $match: {
+          _id: user._id, // match by ID directly
+        },
+      },
+      // --- Subscribers (people who follow this user) ---
+      {
+        $lookup: {
+          from: "subscriptions",
+          localField: "_id",
+          foreignField: "channel",
+          as: "subscribers",
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "subscribers.subscriber", // take subscriber IDs
+          foreignField: "_id",
+          as: "subscriberAccounts", // get user docs
+        },
+      },
+      // --- Subscribed To (people this user follows) ---
+      {
+        $lookup: {
+          from: "subscriptions",
+          localField: "_id",
+          foreignField: "subscriber",
+          as: "subscribedTo",
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "subscribedTo.channel", // take channel IDs
+          foreignField: "_id",
+          as: "subscribedToAccounts", // get user docs
+        },
+      },
+      // --- Videos ---
+      {
+        $lookup: {
+          from: "videos",
+          localField: "_id",
+          foreignField: "owner",
+          as: "videos",
+        },
+      },
+      // --- Add counts ---
+      {
+        $addFields: {
+          subscribersCount: { $size: "$subscribers" },
+          channelsSubscribedToCount: { $size: "$subscribedTo" },
+          isSubscribed: {
+            $cond: {
+              if: { $in: [req.user?._id, "$subscribers.subscriber"] },
+              then: true,
+              else: false,
+            },
+          },
+        },
+      },
+      // --- Keep only what you need ---
+      {
+        $project: {
+          username: 1,
+          fullname: 1,
+          email: 1,
+          avatar: 1,
+          coverImage: 1,
+          subscribersCount: 1,
+          channelsSubscribedToCount: 1,
+          subscriberAccounts: { username: 1, avatar: 1 }, // keep only basic info
+          subscribedToAccounts: { username: 1, avatar: 1 }, // same here
+          videos: 1,
+        },
+      },
+    ]);
+
+    if (!channel.length) {
+      throw new ApiError(404, "User not found");
+    }
+
+    const channelData = channel[0] || {};
     return res
       .status(200)
       .json(
         new ApiResponse(
           200,
-          user,
+          { ...user, ...channelData },
           `Currently logged in user: ${req.user.username}`,
         ),
       );
