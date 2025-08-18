@@ -1,5 +1,7 @@
 import { body, check } from "express-validator";
 import { User } from "../models/user.models.js";
+import bcrypt from "bcrypt";
+const SALT_ROUNDS = 12;
 
 export const registerUserValidation = [
   body("fullname").not().isEmpty().trim(),
@@ -7,6 +9,7 @@ export const registerUserValidation = [
     .notEmpty()
     .trim()
     .isLength({ min: 5, max: 8 })
+    .withMessage("Username is either too short or too long!.")
     .custom(async (value) => {
       const user = await User.findOne({ username: value });
       if (user) {
@@ -24,11 +27,36 @@ export const registerUserValidation = [
       }
     })
     .normalizeEmail(),
-  body("password").notEmpty().trim().isLength({ min: 6 }),
+  body("password")
+    .notEmpty()
+    .isStrongPassword({
+      minLength: 6,
+      maxLength: 12,
+      minUppercase: 1,
+      minNumbers: 3,
+      minSymbols: 1,
+    })
+    .trim(),
 ];
 
 export const changePasswordValidation = [
-  body("newPassword").notEmpty().trim().isLength({ min: 5 }),
+  body("newPassword")
+    .notEmpty()
+    .isStrongPassword({
+      minLength: 6,
+      maxLength: 12,
+      minUppercase: 1,
+      minNumbers: 3,
+      minSymbols: 1,
+    })
+    .trim()
+    .custom(async (value) => {
+      const user = await User.findById(req.user?._id, "password");
+      const passwordsMatch = await bcrypt.compare(value, user.password);
+      if (passwordsMatch) {
+        throw new Error("New Password cannot be same as old password");
+      }
+    }),
 ];
 
 export const updateUserDetailsValidation = [
