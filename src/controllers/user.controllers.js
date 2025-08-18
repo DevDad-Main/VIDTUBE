@@ -256,8 +256,8 @@ const loginUser = asyncHandler(async (req, res) => {
 
   const options = {
     httpOnly: true,
-    //NOTE: Handy for development process but the variable gets set dynamically depending on it's state
-    secure: process.env.NODE_ENV === "production",
+    secure: true,
+    sameSite: "none",
   };
 
   return (
@@ -293,7 +293,8 @@ const logoutUser = asyncHandler(async (req, res) => {
 
   const options = {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure: true,
+    sameSite: "none",
   };
 
   return (
@@ -341,7 +342,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 
     const options = {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: true,
       sameSite: "none",
     };
 
