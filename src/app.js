@@ -32,6 +32,7 @@ app.use(
       "Access-Control-Allow-Headers",
     ],
     optionsSuccessStatus: 200,
+    preflightContinue: true,
     credentials: true,
   }),
 );
