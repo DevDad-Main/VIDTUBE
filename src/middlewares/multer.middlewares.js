@@ -22,9 +22,9 @@ const storage = multer.diskStorage({
     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
     cb(null, file.originalname + "-" + uniqueSuffix);
   },
-  fileFilter: fileFilter,
 });
 
 export const upload = multer({
   storage,
+  fileFilter: fileFilter,
 });
