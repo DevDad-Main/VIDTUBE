@@ -1,12 +1,18 @@
 import multer from "multer";
 import { fileURLToPath } from "url";
 import path from "path";
-import { timeStamp } from "console";
 
+//#region Constants
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const tempDir = path.join(__dirname, "public", "temp");
+
+if (!fs.existsSync(tempDir)) {
+  fs.mkdirSync(tempDir, { recursive: true });
+}
+
+//#endregion
 
 //#region Multer Iamge Type Filter
 const fileFilter = (req, file, cb) => {
