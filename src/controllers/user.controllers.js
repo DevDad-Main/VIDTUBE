@@ -209,17 +209,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
 //#region Login User
 const loginUser = asyncHandler(async (req, res) => {
-  //NOTE: Get data from the body.
-
-  // const email = req.body.email;
-  // const username = req.body.username;
-  // const password = req.body.password;
   const { username, password } = req.body;
-
-  ////NOTE: Validation
-  //if (![email, username, password].some((field) => field?.trim() === "")) {
-  //  throw new ApiError(400, "All Fields are required");
-  //}
 
   const user = await User.findOne({ username: username });
   // const user = await User.findOne({ $or: [
@@ -232,14 +222,10 @@ const loginUser = asyncHandler(async (req, res) => {
   //   ],
   // });
 
-  console.log(user);
-
   if (!user) {
     throw new ApiError(404, "User not found");
   }
 
-  console.log(user.password);
-  //NOTE: Validate the password
   const isPassValid = await bcrypt.compare(password, user.password);
 
   if (!isPassValid) {
@@ -257,7 +243,7 @@ const loginUser = asyncHandler(async (req, res) => {
   const options = {
     httpOnly: true,
     secure: true,
-    sameSite: "none",
+    // sameSite: "none",
   };
 
   return (
