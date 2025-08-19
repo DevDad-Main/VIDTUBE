@@ -36,7 +36,7 @@ app.use(
     credentials: true,
   }),
 );
-
+app.options("*", cors()); // include before other routes
 //NOTE: Allows json data to pass through, but with a limit, so it's not unlimited data
 app.use(
   express.json({
