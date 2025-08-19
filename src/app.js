@@ -24,7 +24,7 @@ const app = express();
 const allowedOrigins = process.env.CORS_ORIGIN.split(","); // split comma-separated string
 
 const corsOptions = {
-  origin: process.env.CORS_ORIGIN,
+  origin: allowedOrigins,
   methods: ["PATCH", "POST", "PUT", "GET", "DELETE", "OPTIONS"],
   allowedHeaders: [
     // "Content-Type",
