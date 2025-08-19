@@ -10,7 +10,9 @@ import likeRouter from "./routes/like.routes.js";
 import commentRouter from "./routes/comment.routes.js";
 import playlistRouter from "./routes/playlist.routes.js";
 import subscriptionRouter from "./routes/subscription.routes.js";
+import dotenv from "dotenv";
 
+dotenv.config();
 const app = express();
 
 //NOTE: CORS -> Cross-Origin Resource Sharing
