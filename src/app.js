@@ -23,17 +23,20 @@ const app = express();
 //NOTE: We have to split the string from .env as it dosent get interpreted as an array of origins
 const allowedOrigins = process.env.CORS_ORIGIN.split(","); // split comma-separated string
 
-const corsOptions = {
-  origin: allowedOrigins,
-  methods: ["PATCH", "POST", "PUT", "GET", "DELETE", "OPTIONS"],
-  allowedHeaders: [
-    // "Content-Type",
-    "Authorization",
-    "Access-Control-Allow-Headers",
-  ],
-  credentials: true,
-  optionsSuccessStatus: 200,
-};
+app.use(
+  cors({
+    origin: allowedOrigins,
+    methods: ["PATCH", "POST", "PUT", "GET", "DELETE", "OPTIONS"],
+    allowedHeaders: [
+      "Content-Type",
+      "Authorization",
+      "Access-Control-Allow-Headers",
+      "Access-Control-Allow-Origin",
+    ],
+    credentials: true,
+    optionsSuccessStatus: 200,
+  }),
+);
 
 //#region Express Middlewares
 //NOTE: Allows json data to pass through, but with a limit, so it's not unlimited data
@@ -57,13 +60,13 @@ app.use(cookieParser());
 //#endregion
 
 //NOTE: Routes
-app.use("/api/v1/healthCheck", cors(corsOptions), healthCheckRouter);
-app.use("/api/v1/users", cors(corsOptions), userRouter);
-app.use("/api/v1/videos", cors(corsOptions), videoRouter);
-app.use("/api/v1/likes", cors(corsOptions), likeRouter);
-app.use("/api/v1/comments", cors(corsOptions), commentRouter);
-app.use("/api/v1/playlists", cors(corsOptions), playlistRouter);
-app.use("/api/v1/subscriptions", cors(corsOptions), subscriptionRouter);
+app.use("/api/v1/healthCheck", healthCheckRouter);
+app.use("/api/v1/users", userRouter);
+app.use("/api/v1/videos", videoRouter);
+app.use("/api/v1/likes", likeRouter);
+app.use("/api/v1/comments", commentRouter);
+app.use("/api/v1/playlists", playlistRouter);
+app.use("/api/v1/subscriptions", subscriptionRouter);
 
 app.use(errorHandler);
 

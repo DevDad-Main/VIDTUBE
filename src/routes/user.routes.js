@@ -71,7 +71,7 @@ router.post(
   registerUser,
 );
 router.get("/all-users", getUsers);
-router.post("/login", cors(corsOptions), loginUser);
+router.post("/login", loginUser);
 router.post("/refresh-token", refreshAccessToken);
 //#endregion
 
