@@ -27,13 +27,12 @@ const corsOptions = {
   origin: process.env.CORS_ORIGIN,
   methods: ["PATCH", "POST", "PUT", "GET", "DELETE", "OPTIONS"],
   allowedHeaders: [
-    "Content-Type",
+    // "Content-Type",
     "Authorization",
     "Access-Control-Allow-Headers",
   ],
-  optionsSuccessStatus: 200,
-  preflightContinue: true,
   credentials: true,
+  optionsSuccessStatus: 200,
 };
 
 //#region Express Middlewares
