@@ -16,7 +16,6 @@ cloudinary.config({
 const uploadOnCloudinary = async (localFilePath, folderId) => {
   try {
     if (!localFilePath) return null;
-    // console.log(localFilePath);
 
     const response = await cloudinary.uploader.upload(localFilePath, {
       //NOTE: This is handy as it will automatically figure out the file type
@@ -55,7 +54,6 @@ const uploadVideoOnCloudinary = async (localFilePath, folderId) => {
     fs.unlinkSync(localFilePath);
 
     return result;
-    console.log(result);
   } catch (error) {
     console.log("error uploading video", error);
     fs.unlinkSync(localFilePath);
