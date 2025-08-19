@@ -15,12 +15,14 @@ if (!fs.existsSync(tempDir)) {
 
 //#endregion
 
-//#region Multer Iamge Type Filter
+//#region Multer Image && Video Type Filter
 const fileFilter = (req, file, cb) => {
+  const allowedImageTypes = ["image/png", "image/jpeg", "image/jpg"];
+  const allowedVideoTypes = ["video/mp4", "video/quicktime", "video/mov"]; // add what you need
+
   if (
-    file.mimetype === "image/png" ||
-    file.mimetype === "image/jpeg" ||
-    file.mimetype === "image/jpg"
+    allowedImageTypes.includes(file.mimetype) ||
+    allowedVideoTypes.includes(file.mimetype)
   ) {
     cb(null, true);
   } else {

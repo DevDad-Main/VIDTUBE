@@ -46,6 +46,7 @@ const uploadVideoOnCloudinary = async (localFilePath, folderId) => {
 
     const result = await cloudinary.uploader.upload(localFilePath, {
       resource_type: "video",
+      format: "mp4",
       folder: `vidtube/${folderId}`,
     });
 
