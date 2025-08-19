@@ -31,10 +31,10 @@ app.use(
       "Content-Type",
       "Authorization",
       "Access-Control-Allow-Headers",
-      "Access-Control-Allow-Origin",
+      // "Access-Control-Allow-Origin",
     ],
     credentials: true,
-    optionsSuccessStatus: 200,
+    // optionsSuccessStatus: 200,
   }),
 );
 
@@ -45,7 +45,6 @@ app.use(
     limit: "16kb",
   }),
 );
-app.use(bodyParser.json());
 //NOTE:
 app.use(
   express.urlencoded({

@@ -20,20 +20,6 @@ import {
   changePasswordValidation,
   updateUserDetailsValidation,
 } from "../utils/validation.utils.js";
-import cors from "cors";
-
-const corsOptions = {
-  origin: process.env.CORS_ORIGIN,
-  methods: ["PATCH", "POST", "PUT", "GET", "DELETE", "OPTIONS"],
-  allowedHeaders: [
-    "Content-Type",
-    "Authorization",
-    "Access-Control-Allow-Headers",
-  ],
-  optionsSuccessStatus: 200,
-  preflightContinue: true,
-  credentials: true,
-};
 
 //NOTE:   Using router modules in Express is all about:
 
