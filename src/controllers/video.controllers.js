@@ -26,7 +26,7 @@ const getAllVideos = asyncHandler(async (req, res) => {
       throw new ApiError(404, "No videos found");
     }
 
-    console.log("VIDEOS", videos);
+    // console.log("VIDEOS", videos);
     res.status(200).json(new ApiResponse(200, videos, "Videos fetched"));
   } catch (error) {
     throw new ApiError(500, "Failed to fetch videos", error);
@@ -40,10 +40,12 @@ const publishAVideo = asyncHandler(async (req, res) => {
   const { title, description, isPublished } = req.body;
   // TODO: get video, upload to cloudinary, create video
 
-  console.log(req.body);
+  // console.log(req.body);
 
   const videoLocalPath = req.files?.video[0]?.path;
   const thumbnailLocalPath = req.files?.thumbnail[0]?.path;
+
+  console.log(videoLocalPath);
 
   if (!videoLocalPath || !thumbnailLocalPath) {
     throw new ApiError(400, "Video or thumbnail is missing");
