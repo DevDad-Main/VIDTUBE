@@ -11,6 +11,7 @@ import commentRouter from "./routes/comment.routes.js";
 import playlistRouter from "./routes/playlist.routes.js";
 import subscriptionRouter from "./routes/subscription.routes.js";
 import dotenv from "dotenv";
+import { registerUserValidation } from "./utils/validation.utils.js";
 
 dotenv.config();
 const app = express();
@@ -22,21 +23,20 @@ const app = express();
 //NOTE: We have to split the string from .env as it dosent get interpreted as an array of origins
 const allowedOrigins = process.env.CORS_ORIGIN.split(","); // split comma-separated string
 
-app.use(
-  cors({
-    origin: process.env.CORS_ORIGIN,
-    methods: ["PATCH", "POST", "PUT", "GET", "DELETE", "OPTIONS"],
-    allowedHeaders: [
-      "Content-Type",
-      "Authorization",
-      "Access-Control-Allow-Headers",
-    ],
-    optionsSuccessStatus: 200,
-    preflightContinue: true,
-    credentials: true,
-  }),
-);
-app.options("*", cors()); // include before other routes
+const corsOptions = {
+  origin: process.env.CORS_ORIGIN,
+  methods: ["PATCH", "POST", "PUT", "GET", "DELETE", "OPTIONS"],
+  allowedHeaders: [
+    "Content-Type",
+    "Authorization",
+    "Access-Control-Allow-Headers",
+  ],
+  optionsSuccessStatus: 200,
+  preflightContinue: true,
+  credentials: true,
+};
+
+//#region Express Middlewares
 //NOTE: Allows json data to pass through, but with a limit, so it's not unlimited data
 app.use(
   express.json({
@@ -55,15 +55,16 @@ app.use(
 app.use(express.static("public"));
 //NOTE: Using cookie parser so we can access our cookies
 app.use(cookieParser());
+//#endregion
 
 //NOTE: Routes
-app.use("/api/v1/healthCheck", healthCheckRouter);
-app.use("/api/v1/users", userRouter);
-app.use("/api/v1/videos", videoRouter);
-app.use("/api/v1/likes", likeRouter);
-app.use("/api/v1/comments", commentRouter);
-app.use("/api/v1/playlists", playlistRouter);
-app.use("/api/v1/subscriptions", subscriptionRouter);
+app.use("/api/v1/healthCheck", cors(corsOptions), healthCheckRouter);
+app.use("/api/v1/users", cors(corsOptions), userRouter);
+app.use("/api/v1/videos", cors(corsOptions), videoRouter);
+app.use("/api/v1/likes", cors(corsOptions), likeRouter);
+app.use("/api/v1/comments", cors(corsOptions), commentRouter);
+app.use("/api/v1/playlists", cors(corsOptions), playlistRouter);
+app.use("/api/v1/subscriptions", cors(corsOptions), subscriptionRouter);
 
 app.use(errorHandler);
 
