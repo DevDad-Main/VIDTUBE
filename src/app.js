@@ -27,7 +27,7 @@ app.use(
     allowedHeaders: [
       "Content-Type",
       "Authorization",
-      "Access-Control-Allow-Headers",
+      // "Access-Control-Allow-Headers",
     ],
     credentials: true,
   }),
