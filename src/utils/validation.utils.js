@@ -66,6 +66,9 @@ export const changePasswordValidation = [
       minNumbers: 3,
       minSymbols: 1,
     })
+    .withMessage(
+      "Password must be 6–12 characters and include at least 1 uppercase, 3 numbers, and 1 symbol.",
+    )
     .trim()
     .custom(async (value, { req }) => {
       const user = await User.findById(req.user?._id, "password");
