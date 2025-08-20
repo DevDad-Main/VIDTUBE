@@ -101,7 +101,9 @@ const publishAVideo = asyncHandler(async (req, res) => {
 
     // const createdVideo = await Video.findById(newVideo._id);
 
-    res.status(200).json(new ApiResponse(200, newVideo, "Video Published"));
+    return res
+      .status(200)
+      .json(new ApiResponse(200, newVideo, "Video Published"));
   } catch (error) {
     console.log(error);
 
