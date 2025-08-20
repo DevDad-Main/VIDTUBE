@@ -21,7 +21,6 @@ import {
   updateUserDetailsValidation,
   loginUserValidation,
 } from "../utils/validation.utils.js";
-import { validateRequest } from "../utils/validationRequest.utils.js";
 
 //NOTE:   Using router modules in Express is all about:
 
@@ -56,7 +55,6 @@ router.post(
     },
   ]),
   registerUserValidation,
-  // validateRequest,
   registerUser,
 );
 router.get("/all-users", getUsers);

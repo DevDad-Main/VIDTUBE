@@ -503,12 +503,11 @@ const getCurrentUser = asyncHandler(async (req, res) => {
 //#region Update User Account Details
 //NOTE: We don't have to allow updating everything, maybe specific things like, email, username etc
 const updateAccountDetails = asyncHandler(async (req, res) => {
-  const errors = validationResult(req);
   const { fullname, email } = req.body;
+  const errors = validationResult(req);
 
-  console.log(req.body);
   if (!errors.isEmpty()) {
-    throw new ApiError(400, "Error validating user input", errors.array());
+    return res.status(400).json({ errors: errors.array() });
   }
 
   const user = await User.findByIdAndUpdate(
@@ -522,7 +521,7 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
     { new: true },
   ).select("-password -refreshToken");
 
-  res
+  return res
     .status(200)
     .json(new ApiResponse(200, user, "Account details updated successfully"));
 });

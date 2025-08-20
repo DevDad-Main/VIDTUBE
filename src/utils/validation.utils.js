@@ -1,6 +1,7 @@
-import { body, check } from "express-validator";
+import { body } from "express-validator";
 import { User } from "../models/user.models.js";
 import bcrypt from "bcrypt";
+
 //#region Regex Check
 export function escapeRegex(str) {
   return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -66,7 +67,7 @@ export const changePasswordValidation = [
       minSymbols: 1,
     })
     .trim()
-    .custom(async (value) => {
+    .custom(async (value, { req }) => {
       const user = await User.findById(req.user?._id, "password");
       const passwordsMatch = await bcrypt.compare(value, user.password);
       if (passwordsMatch) {
@@ -86,8 +87,13 @@ export const updateUserDetailsValidation = [
     .notEmpty()
     .isEmail()
     .withMessage("Please enter a valid email address.")
-    .custom(async (value) => {
+    .custom(async (value, { req }) => {
       const user = await User.findOne({ email: value });
+      const loggedInUser = await User.findById(req.user?._id);
+
+      if (loggedInUser && loggedInUser.email === value) {
+        throw new Error("You're already using this email address");
+      }
       if (user) {
         throw new Error("Email address already exists");
       }
