@@ -60,7 +60,7 @@ export const changePasswordValidation = [
   body("password")
     .notEmpty()
     .withMessage(
-      "Password field can't be empty and must match existing password!.",
+      "Old Password field can't be empty and must match existing password!.",
     ),
   body("newPassword")
     .notEmpty()
