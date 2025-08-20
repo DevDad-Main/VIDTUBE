@@ -71,7 +71,6 @@ const registerUser = asyncHandler(async (req, res) => {
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
-    console.log(errors.array());
     return res.status(400).json({ errors: errors.array() });
   }
   //#region Old Validation Code
@@ -211,6 +210,12 @@ const registerUser = asyncHandler(async (req, res) => {
 //#region Login User
 const loginUser = asyncHandler(async (req, res) => {
   const { username, password } = req.body;
+
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
 
   if (!username.trim() || !password.trim()) {
     throw new ApiError(400, "Username and Password is required");

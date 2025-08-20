@@ -1,8 +1,13 @@
 import { body, check } from "express-validator";
 import { User } from "../models/user.models.js";
 import bcrypt from "bcrypt";
-import { SALT_ROUNDS } from "../constants.js";
+//#region Regex Check
+export function escapeRegex(str) {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+//#endregion
 
+//#region Register User Validation
 export const registerUserValidation = [
   body("fullname").not().isEmpty().withMessage("Full name is required.").trim(),
 
@@ -47,7 +52,9 @@ export const registerUserValidation = [
     )
     .trim(),
 ];
+//#endregion
 
+//#region Change Password Validation
 export const changePasswordValidation = [
   body("newPassword")
     .notEmpty()
@@ -67,9 +74,14 @@ export const changePasswordValidation = [
       }
     }),
 ];
+//#endregion
 
+//#region Update User Details Validation
 export const updateUserDetailsValidation = [
-  body("fullname").notEmpty().trim(),
+  body("fullname")
+    .notEmpty()
+    .trim()
+    .withMessage("Fullname field can't be empty!"),
   body("email")
     .notEmpty()
     .isEmail()
@@ -81,19 +93,22 @@ export const updateUserDetailsValidation = [
       }
     })
     .normalizeEmail(),
-  // body("username")
-  //   .notEmpty()
-  //   .trim()
-  //   .isLength({ min: 5, max: 10 })
-  //   .withMessage("Username must be 5-10 characters")
-  //   .custom(async (value) => {
-  //     const user = await User.findOne({ username: value });
-  //     if (user) {
-  //       throw new Error("username already exists");
-  //     }
-  //   }),
 ];
+//#endregion
 
-export function escapeRegex(str) {
-  return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-}
+//#region Login User Validation
+export const loginUserValidation = [
+  body("username")
+    .notEmpty()
+    .withMessage("Username field can't be empty!.")
+    .bail()
+    .custom(async (value) => {
+      const userToFind = await User.findOne({ username: value });
+      if (!userToFind) {
+        throw new Error("User Not Found!.");
+      }
+    })
+    .trim(),
+  body("password").notEmpty().withMessage("Password field can't be empty!."),
+];
+//#endregion

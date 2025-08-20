@@ -19,6 +19,7 @@ import {
   registerUserValidation,
   changePasswordValidation,
   updateUserDetailsValidation,
+  loginUserValidation,
 } from "../utils/validation.utils.js";
 import { validateRequest } from "../utils/validationRequest.utils.js";
 
@@ -59,7 +60,7 @@ router.post(
   registerUser,
 );
 router.get("/all-users", getUsers);
-router.post("/login", loginUser);
+router.post("/login", loginUserValidation, loginUser);
 router.post("/refresh-token", refreshAccessToken);
 //#endregion
 
