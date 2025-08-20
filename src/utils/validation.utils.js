@@ -8,7 +8,7 @@ export const registerUserValidation = [
   body("username")
     .notEmpty()
     .trim()
-    .isLength({ min: 5, max: 8 })
+    .isLength({ min: 5, max: 12 })
     .withMessage("Username is either too short or too long!.")
     .custom(async (value) => {
       const user = await User.findOne({ username: value });

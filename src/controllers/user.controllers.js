@@ -66,12 +66,7 @@ const generateAccessAndRefreshToken = async (userId) => {
 const registerUser = asyncHandler(async (req, res) => {
   //NOTE: We also have the image files aswell avatar and cover image but they get handled seperately by multer
 
-  const errors = validationResult(req);
   const { fullname, email, username, password } = req.body;
-
-  if (!errors.isEmpty()) {
-    throw new ApiError(400, "Error validating user input", errors.array());
-  }
 
   //#region Old Validation Code
   ////NOTE: Check to see if the user already exists, we will import in the User from mongo that we made using mongoose
@@ -96,7 +91,7 @@ const registerUser = asyncHandler(async (req, res) => {
   //}
   //#endregion
 
-  console.warn(req.files);
+  // console.warn(req.files);
   const avatarLocalPath = req.files?.avatar?.[0]?.path;
   const coverImageLocalPath = req.files?.coverImage?.[0]?.path;
 
