@@ -367,7 +367,11 @@ const changeUserPassword = asyncHandler(async (req, res) => {
   //NOTE: then we can get the newely requested password and update our db with that password
 
   const { oldPassword, newPassword } = req.body;
+  const errors = validationResult(req);
 
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
   const user = await User.findById(req.user?._id);
 
   const isPasswordValid = await bcrypt.compare(oldPassword, user.password);
