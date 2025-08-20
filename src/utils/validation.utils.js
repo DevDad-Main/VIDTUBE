@@ -36,6 +36,9 @@ export const registerUserValidation = [
       minNumbers: 3,
       minSymbols: 1,
     })
+    .withMessage(
+      "Password must contain at least 1 uppercase, 3 numbers, and 1 symbol!",
+    )
     .trim(),
 ];
 
