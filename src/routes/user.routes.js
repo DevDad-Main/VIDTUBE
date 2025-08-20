@@ -55,7 +55,7 @@ router.post(
     },
   ]),
   registerUserValidation,
-  validateRequest,
+  // validateRequest,
   registerUser,
 );
 router.get("/all-users", getUsers);

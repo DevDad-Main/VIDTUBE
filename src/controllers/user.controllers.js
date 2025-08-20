@@ -68,6 +68,12 @@ const registerUser = asyncHandler(async (req, res) => {
 
   const { fullname, email, username, password } = req.body;
 
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    console.log(errors.array());
+    return res.status(400).json({ errors: errors.array() });
+  }
   //#region Old Validation Code
   ////NOTE: Check to see if the user already exists, we will import in the User from mongo that we made using mongoose
   ////NOTE: We can find the user by multiple queries like .findOne({username or email etc})
@@ -206,7 +212,7 @@ const registerUser = asyncHandler(async (req, res) => {
 const loginUser = asyncHandler(async (req, res) => {
   const { username, password } = req.body;
 
-  if (!username || !password) {
+  if (!username.trim() || !password.trim()) {
     throw new ApiError(400, "Username and Password is required");
   }
   const user = await User.findOne({ username: username });
