@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import fs from "fs";
 import healthCheckRouter from "./routes/healthCheck.routes.js";
 import cookieParser from "cookie-parser";
 import userRouter from "./routes/user.routes.js";
@@ -13,11 +14,22 @@ import subscriptionRouter from "./routes/subscription.routes.js";
 import dotenv from "dotenv";
 import { registerUserValidation } from "./utils/validation.utils.js";
 import helmet from "helmet";
+import morgan from "morgan";
+import compression from "compression";
 
 dotenv.config();
 const app = express();
 
+const accessLogStream = fs.createWriteStream(
+  path.join(__dirname, "access.log"),
+  {
+    flags: "a",
+  },
+);
+
 app.use(helmet());
+app.use(compression());
+app.use(morgan("combined", { stream: accessLogStream }));
 
 //NOTE: CORS -> Cross-Origin Resource Sharing
 //NOTE: CORS is a security feature built into web browsers
