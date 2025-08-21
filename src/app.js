@@ -12,9 +12,12 @@ import playlistRouter from "./routes/playlist.routes.js";
 import subscriptionRouter from "./routes/subscription.routes.js";
 import dotenv from "dotenv";
 import { registerUserValidation } from "./utils/validation.utils.js";
+import helmet from "helmet";
 
 dotenv.config();
 const app = express();
+
+app.use(helmet());
 
 //NOTE: CORS -> Cross-Origin Resource Sharing
 //NOTE: CORS is a security feature built into web browsers
