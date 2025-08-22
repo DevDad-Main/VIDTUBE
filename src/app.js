@@ -6,16 +6,15 @@ import cookieParser from "cookie-parser";
 import userRouter from "./routes/user.routes.js";
 import videoRouter from "./routes/video.routes.js";
 import { errorHandler } from "./middlewares/error.middlewares.js";
-import bodyParser from "body-parser";
 import likeRouter from "./routes/like.routes.js";
 import commentRouter from "./routes/comment.routes.js";
 import playlistRouter from "./routes/playlist.routes.js";
 import subscriptionRouter from "./routes/subscription.routes.js";
 import dotenv from "dotenv";
-import { registerUserValidation } from "./utils/validation.utils.js";
 import helmet from "helmet";
 import morgan from "morgan";
 import compression from "compression";
+import path from "path";
 
 dotenv.config();
 const app = express();
