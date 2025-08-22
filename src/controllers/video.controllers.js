@@ -15,7 +15,7 @@ const getAllVideos = asyncHandler(async (req, res) => {
   //TODO: get all videos based on query, sort, pagination
   try {
     const pageNum = parseInt(page) || 1;
-    const limitNum = parseInt(limit) || 10;
+    const limitNum = parseInt(limit) || 5;
 
     const videos = await Video.find()
       .populate("owner", "-password, -email")
@@ -26,8 +26,20 @@ const getAllVideos = asyncHandler(async (req, res) => {
       throw new ApiError(404, "No videos found");
     }
 
-    // console.log("VIDEOS", videos);
-    res.status(200).json(new ApiResponse(200, videos, "Videos fetched"));
+    const totalVideos = await Video.countDocuments();
+
+    return res.status(200).json(
+      new ApiResponse(
+        200,
+        {
+          videos,
+          totalVideos,
+          totalPages: Math.ceil(totalVideos / limitNum),
+          currentPage: pageNum,
+        },
+        "Videos fetched",
+      ),
+    );
   } catch (error) {
     throw new ApiError(500, "Failed to fetch videos", error);
   }

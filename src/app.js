@@ -17,11 +17,11 @@ import compression from "compression";
 import path from "path";
 import { fileURLToPath } from "url";
 
+dotenv.config();
+
+const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
-dotenv.config();
-const app = express();
 
 const accessLogStream = fs.createWriteStream(
   path.join(__dirname, "access.log"),
@@ -29,10 +29,6 @@ const accessLogStream = fs.createWriteStream(
     flags: "a",
   },
 );
-
-app.use(helmet());
-app.use(compression());
-app.use(morgan("combined", { stream: accessLogStream }));
 
 //NOTE: CORS -> Cross-Origin Resource Sharing
 //NOTE: CORS is a security feature built into web browsers
@@ -57,6 +53,11 @@ app.use(
 );
 
 //#region Express Middlewares
+
+app.use(helmet());
+app.use(compression());
+app.use(morgan("combined", { stream: accessLogStream }));
+
 //NOTE: Allows json data to pass through, but with a limit, so it's not unlimited data
 app.use(
   express.json({
