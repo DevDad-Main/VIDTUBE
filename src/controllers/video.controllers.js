@@ -12,7 +12,6 @@ import { escapeRegex } from "../utils/validation.utils.js";
 //#region Get All Videos
 const getAllVideos = asyncHandler(async (req, res) => {
   const { page, limit } = req.query;
-  //TODO: get all videos based on query, sort, pagination
   try {
     const pageNum = parseInt(page) || 1;
     const limitNum = parseInt(limit) || 5;
@@ -26,7 +25,7 @@ const getAllVideos = asyncHandler(async (req, res) => {
       throw new ApiError(404, "No videos found");
     }
 
-    const totalVideos = await Video.countDocuments();
+    const totalVideos = await Video.find().count();
 
     return res.status(200).json(
       new ApiResponse(
