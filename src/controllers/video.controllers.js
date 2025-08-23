@@ -25,7 +25,7 @@ const getAllVideos = asyncHandler(async (req, res) => {
       throw new ApiError(404, "No videos found");
     }
 
-    const totalVideos = await Video.find().count();
+    const totalVideos = await Video.countDocuments();
 
     return res.status(200).json(
       new ApiResponse(

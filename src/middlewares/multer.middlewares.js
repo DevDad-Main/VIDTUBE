@@ -7,7 +7,7 @@ import fs from "fs";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const tempDir = path.join(__dirname, "public", "temp");
+const tempDir = path.join(__dirname, "src", "public", "temp");
 
 if (!fs.existsSync(tempDir)) {
   fs.mkdirSync(tempDir, { recursive: true });
@@ -35,6 +35,8 @@ const fileFilter = (req, file, cb) => {
   }
 };
 //#endregion
+
+const test = multer.memoryStorage({});
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
