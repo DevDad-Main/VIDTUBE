@@ -11,7 +11,7 @@ import { escapeRegex } from "../utils/validation.utils.js";
 
 //#region Get All Videos
 const getAllVideos = asyncHandler(async (req, res) => {
-  const { page, limit, query, sortBy, sortType, userId } = req.query;
+  const { page, limit } = req.query;
   //TODO: get all videos based on query, sort, pagination
   try {
     const pageNum = parseInt(page) || 1;
