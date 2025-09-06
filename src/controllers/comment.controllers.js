@@ -60,7 +60,9 @@ const getVideoComments = asyncHandler(async (req, res) => {
     },
   ]);
 
-  res.status(200).json(new ApiResponse(200, comments, "Comments fetched"));
+  return res
+    .status(200)
+    .json(new ApiResponse(200, comments, "Comments fetched"));
 });
 //#endregion
 
