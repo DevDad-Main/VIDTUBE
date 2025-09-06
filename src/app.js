@@ -19,6 +19,7 @@ import { fileURLToPath } from "url";
 
 dotenv.config();
 
+//#region CONSTANTS
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -36,7 +37,9 @@ const accessLogStream = fs.createWriteStream(
 
 //NOTE: We have to split the string from .env as it dosent get interpreted as an array of origins
 const allowedOrigins = process.env.CORS_ORIGIN.split(","); // split comma-separated string
+//#endregion
 
+//#region Express Middlewares
 app.use(
   cors({
     origin: allowedOrigins,
@@ -51,8 +54,6 @@ app.use(
     // optionsSuccessStatus: 200,
   }),
 );
-
-//#region Express Middlewares
 
 app.use(helmet());
 app.use(compression());
@@ -77,6 +78,7 @@ app.use(express.static("public"));
 app.use(cookieParser());
 //#endregion
 
+//#region API Endpoints
 //NOTE: Routes
 app.use("/api/v1/healthCheck", healthCheckRouter);
 app.use("/api/v1/users", userRouter);
@@ -87,5 +89,6 @@ app.use("/api/v1/playlists", playlistRouter);
 app.use("/api/v1/subscriptions", subscriptionRouter);
 
 app.use(errorHandler);
+//#endregion
 
 export { app };
